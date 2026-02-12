@@ -42,7 +42,7 @@
         }
       },
       "marketplace": {
-        "source": "git@github.com:xarlord/devflow-enforcer.git",
+        "source": "https://github.com/xarlord/devflow-enforcer.git",
         "packageName": "@xarlord/devflow-enforcer"
       },
       "manifests": {
