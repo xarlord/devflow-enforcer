@@ -1,0 +1,26 @@
+-its a software development workflow heavily dependent on documentation.
+-worflow can be integrated to claude as plugin
+-plugin contains agents, skills, slash commands, workflows
+-workflows are always enforced by Project Lead Agent
+-Always start with asking user for name of the application and initiate a git
+-main workflow is generate requirements --> validate and make consistency check based on user input --> Design High Level Arhitecture --> 
+   --->Design Interractions / Data Models / Functional Specifications --> Create Testing Specification --> Create Features and Allocate the requirements to the features -->
+   --->for each feature Create a branch --> Create detailed task list and reference docs for each feature --> Develop functional and testing code --> check Linting --> Review Code -->
+   --->Execute Unit Testing (Always %95 Coverage, %100 pass rate) --> Create Pull Request --> Make Static analysis and Security Check --> Build/Integrate Code -->
+   --->Run integration Testing ---> Stage the code to real world scenario and execute BDD testing --> Build Artifacts & Update the Docs --> Pass Rate Reached - User test request. 
+-for each phase create finding and enforce responsible agent to close the finding
+-While reviewing the requirements, all requirements must be clear, conisise and varifiable, always need to avoid vague definitions.
+-System should not assume about environment, technology or code, always needs to make necessary checkking, if agent is not sure which way to go, prompt user how to handle.
+-If any user prompt is a new feature documentation must be updated and for the new feature / PR main worklflow should be enforced.
+-Always spawn a QA agent and Testing Agent to enforce quality process during all testing phases
+-Always spawn a System/Software Architect to requirement / Design phases.
+-Enforce the process until quality metrics have satisfied within containing in a development loop.
+-Document Important progress fix status task status findings in  seperate docs.
+-In case of context window is less than %5 update documentation and clear context window continue re-construct the context window based on documentation
+-There should be git expert knows how to push / merge / PR / rebase the repo.
+-There should be a security expert to make security reviews.
+-For each possible tech stack, there should be seprate coding agents, when that specific task comes one or multiple one should work on the task/tasks.
+-MOST IMPORTANT requirement is making the process being enforced always.
+-There should be retrospective agent to collect findings that is wrongly implemented, after finding is closed, retrospective agent should log what's done wrong how its fixed status into lessons-learned document
+-When an agent start to work it will always first check the lessons-learned logs. 
+-retrospective agent must maintain the lessons learned doc clear and document cannot be bigger than %10 of the context window, therefore agent should give priority to given lessons learned in case limit is reached less imprtant lessons should be removed. 
