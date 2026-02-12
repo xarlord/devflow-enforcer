@@ -36,7 +36,7 @@
       "documentation": "Auto-generated documentation and summaries"
     },
     "marketplace": {
-      "source": "git@github.com:xarlord/owner/repo",
+      "source": "git@github.com:xarlord/devflow-enforcer.git",
       "packageName": "@xarlord/devflow-enforcer"
     }
   },
