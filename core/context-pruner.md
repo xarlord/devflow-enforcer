@@ -4,6 +4,10 @@
 
 Monitor context window usage and trigger pruning when threshold reached.
 
+## Expected Token Savings
+
+~86% (~20,600 tokens)
+
 ## Implementation
 
 ```typescript

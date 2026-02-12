@@ -4,7 +4,13 @@
 
 Load workflow phases on-demand, showing previews of upcoming work.
 
+## Expected Token Savings
+
+~88% (~7,000 tokens)
+
 ## Implementation
+
+Groups 14 phases into 7 logical groups.
 
 ```typescript
 interface PhaseGroup {
