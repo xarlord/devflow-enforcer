@@ -11,7 +11,6 @@
   "plugins": [
     {
       "name": "devflow-enforcer",
-      "displayName": "DevFlow Enforcer",
       "source": "./",
       "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 14-phase quality gates",
       "version": "2.0.0",
