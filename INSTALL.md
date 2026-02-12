@@ -1,4 +1,159 @@
-# DevFlow Enforcer - Installation & Testing Guide
+# Installing DevFlow Enforcer v2.0
+
+## Claude Code Marketplace Installation
+
+### Quick Install (Recommended)
+
+**Step 1:** Clone the repository
+
+```bash
+git clone https://github.com/xarlord/devflow-enforcer.git
+cd devflow-enforcer
+```
+
+**Step 2:** The plugin will be auto-activated by Claude Code
+
+**Done!** Restart Claude Code and start a software development task.
+
+---
+
+## Manual Installation
+
+If auto-installation doesn't work, you can manually copy the plugin files:
+
+### Windows
+
+```powershell
+# Navigate to Claude plugins directory
+cd $env:USERPROFILE%\.claude\plugins
+
+# Create plugin directory (if needed)
+mkdir devflow-enforcer
+
+# Copy all plugin files
+Copy-Item -Path "devflow-enforcer\agents" -Destination ".\claude\plugins\devflow-enforcer\agents" -Recurse -Force
+Copy-Item -Path "devflow-enforcer\core" -Destination ".\claude\plugins\devflow-enforcer\core" -Recurse -Force
+Copy-Item -Path "devflow-enforcer\docs" -Destination ".\claude\plugins\devflow-enforcer\docs" -Recurse -Force
+Copy-Item -Path "devflow-enforcer\claude.json" -Destination ".\claude\plugins\devflow-enforcer\claude.json" -Recurse -Force
+Copy-Item -Path "devflow-enforcer\index.js" -Destination ".\claude\plugins\devflow-enforcer\index.js" -Recurse -Force
+```
+
+### macOS/Linux
+
+```bash
+# Navigate to Claude plugins directory
+cd ~/.claude/plugins
+
+# Create plugin directory (if needed)
+mkdir -p devflow-enforcer
+
+# Copy all plugin files
+cp -r devflow-enforcer/* ~/.claude/plugins/devflow-enforcer/
+```
+
+---
+
+## What is DevFlow Enforcer?
+
+A **Claude Code marketplace plugin** that enforces a rigorous 14-phase software development workflow with **~78% context window savings**.
+
+### Key Features
+
+- **14-Phase Workflow**: Requirements → Design → Development → Testing → Deployment
+- **15 Specialized Agents**: Auto-spawned when needed
+- **Quality Gates**: 95% test coverage, 100% pass rate (enforced)
+- **Context Optimization**: Structured output, lazy loading, smart pruning
+
+### Workflow Phases
+
+1. Requirements Generation
+2. Validation & Consistency Check
+3. High Level Architecture Design
+4. Detailed Design (Interactions/Data Models/Specs)
+5. Testing Specification
+6. Feature Creation & Allocation
+7a. Create Branch
+7b. Create Task List & Reference Docs
+7c. Development
+7d. Linting Check
+7e. Code Review
+7f. Unit Testing (95% coverage required)
+7g. Create Pull Request
+7h. Static Analysis & Security Check
+7i. Build/Integrate Code
+7j. Integration Testing
+7k. BDD Testing
+7l. Build Artifacts & Update Docs
+7m. User Acceptance Testing
+
+---
+
+## Installation Directory Structure
+
+```
+~/.claude/plugins/devflow-enforcer/
+├── claude.json          # Plugin manifest for marketplace
+├── index.js               # Main entry point
+├── agents/                # 15 agent specifications
+│   ├── project-lead/
+│   ├── architect/
+│   ├── qa/
+│   ├── testing/
+│   ├── coders/
+│   │   ├── typescript-coding-agent.md
+│   │   ├── python-coding-agent.md
+│   │   ├── java-coding-agent.md
+│   │   ├── cpp-coding-agent.md
+│   │   ├── rust-coding-agent.md
+│   │   └── csharp-coding-agent.md
+│   ├── git-expert/
+│   ├── security/
+│   ├── retrospective/
+│   ├── docker-agent.md
+│   └── database-agent.md
+├── core/                   # Plugin infrastructure
+│   ├── types/agent-result.ts
+│   ├── agent-loader-v2.md
+│   ├── context-pruner.md
+│   └── workflow-loader.md
+└── docs/                    # Documentation
+    ├── agents/SUMMARY.md
+    ├── workflow/SUMMARY.md
+    └── [implementation guides]
+```
+
+---
+
+## Version Information
+
+- **Current Version**: 2.0.0
+- **Release Date**: 2026-02-12
+- **Claude Code Compatibility**: 2024-11-05 API
+- **License**: MIT
+
+---
+
+## Getting Started
+
+Once installed, simply start a software development task in Claude Code:
+
+```
+You: I want to add user authentication
+
+Claude: I'll enforce the DevFlow workflow for this feature.
+[Current Phase: 1 - Requirements Generation]
+[Spawning: System/Software Architect]
+
+Let me generate requirements...
+```
+
+---
+
+## Support
+
+- **GitHub Issues**: https://github.com/xarlord/devflow-enforcer/issues
+- **Documentation**: See `docs/` folder
+- **Repository**: https://github.com/xarlord/devflow-enforcer
 
 ## GitHub Repository
 

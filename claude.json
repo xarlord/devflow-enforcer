@@ -1,0 +1,95 @@
+{
+  "apiVersion": "2024-11-05",
+  "name": "DevFlow Enforcer",
+  "description": "Context-optimized workflow enforcement plugin - ~78% token savings with 14-phase quality gates",
+  "version": "2.0.0",
+  "publisher": "Sefa Ocakli",
+  "license": "MIT",
+  "type": "workflow-enforcement",
+  "categories": ["workflow", "devops", "quality"],
+  "capabilities": {
+    "workflowEnforcement": {
+      "phases": 14,
+      "qualityGates": true,
+      "metrics": ["95% coverage", "100% pass rate"]
+    },
+    "contextOptimization": {
+      "savingsPercentage": 78,
+      "strategies": ["selective-agent-loading", "structured-output", "documentation-summarization", "context-pruning", "jit-workflow-loading"]
+    },
+    "agentSystem": {
+      "totalAgents": 15,
+      "specializedAgents": ["project-lead", "architect", "qa", "testing", "security", "git-expert", "retrospective"],
+      "codingAgents": ["typescript", "python", "java", "cpp", "rust", "csharp"],
+      "infrastructureAgents": ["docker", "database"]
+    }
+  },
+  "manifests": {
+    "main": "index.js",
+    "hooks": {},
+    "worker": [],
+    "assets": [],
+    "styles": []
+  },
+  "settings": {
+    "activation": "automatic",
+    "contextThreshold": 80,
+    "qualityRequirements": {
+      "coverageThreshold": 95,
+      "passRateThreshold": 100
+    }
+  },
+  "claude": {
+    "minVersion": "1.0",
+    "requires": [],
+    "provides": {
+      "workflow": "Enforces 14-phase software development process",
+      "agents": "15 specialized agents for different development tasks",
+      "documentation": "Auto-generated documentation and summaries"
+    }
+  },
+  "installation": {
+    "method": "manual-git-clone",
+    "sourceDirectory": "devflow-enforcer",
+    "instructions": {
+      "clone": "git clone https://github.com/xarlord/devflow-enforcer.git",
+      "pluginsTarget": ".claude/plugins/",
+      "restartRequired": true
+    }
+  },
+  "documentation": {
+      "readme": "README.md",
+      "changelog": "docs/changes.md",
+      "examples": "docs/examples/",
+      "api": "docs/api.md"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xarlord/devflow-enforcer",
+    "issues": "https://github.com/xarlord/devflow-enforcer/issues"
+  },
+  "keywords": [
+    "claude-code",
+    "claude",
+    "plugin",
+    "workflow",
+    "devops",
+    "sdlc",
+    "quality-gates",
+    "testing",
+    "code-review",
+    "context-optimization",
+    "software-development-lifecycle"
+  ],
+  "author": {
+      "name": "Sefa Ocakli",
+      "email": "sefa.ocakli@daiichi.local",
+      "url": "https://github.com/xarlord"
+  },
+  "contributors": [
+    {
+      "name": "Claude (Anthropic)",
+      "email": "noreply@anthropic.com"
+    }
+  ]
+}
