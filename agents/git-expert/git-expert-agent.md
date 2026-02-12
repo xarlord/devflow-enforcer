@@ -136,22 +136,27 @@ git push origin feature/[feature-name] --force-with-lease
 
 ## Output Format
 
-```
-## Git Operation: [Operation Type]
+Return `AgentResult<GitData>`:
 
-### Operation
-[Description of what was done]
+```typescript
+interface GitData {
+    operation: 'branch' | 'commit' | 'pr' | 'merge' | 'rebase';
+    branch: string;
+    status: 'success' | 'failed';
+    prUrl?: string;
+    commandsExecuted: string[];
+}
 
-### Commands Executed
-```bash
-[Commands]
-```
-
-### Result
-- Branch: [branch-name]
-- Status: [Success/Failure]
-- PR URL: [link if applicable]
-
-### Next Steps
-[What to do next]
+const result: AgentResult<GitData> = {
+    status: 'success',
+    summary: 'Created feature branch user-auth',
+    nextPhase: 'development',
+    criticalFindings: [],
+    data: {
+        operation: 'branch',
+        branch: 'feature/user-auth',
+        status: 'success',
+        commandsExecuted: ['git checkout -b feature/user-auth', 'git push -u origin feature/user-auth']
+    }
+};
 ```

@@ -2,9 +2,13 @@
 
 ## Agent Specification
 
-**Name:** C/C++ Coding Agent
-**Role:** C/C++ Feature Implementation
-**Spawned By:** Project Lead Agent for development tasks
+## Agent Capabilities
+- C/C++ feature development
+- Google Test implementation
+- clang-tidy/cppcheck enforcement
+
+### Configuration Options
+load: true # Load only this agent spec when needed
 
 ## Responsibilities
 
@@ -407,29 +411,45 @@ private:
 
 ## Output Format
 
-```
-## Development Report for [Feature]
+Return `AgentResult<DevelopmentData>`:
 
-### Code Implemented
-- Files created: [list]
-- Lines of code: [count]
-- Classes implemented: [count]
+```typescript
+interface DevelopmentData {
+    filesCreated: string[];
+    linesOfCode: number;
+    classesImplemented: number;
+    tests: {
+        files: string[];
+        cases: number;
+        coverage: number;
+        passRate: number;
+    };
+    linting: {
+        clangTidyErrors: number;
+        cppcheckErrors: number;
+        memoryLeaks: number;
+        status: 'pass' | 'fail';
+    };
+    lessonsApplied: string[];
+}
 
-### Tests Implemented
-- Test files: [list]
-- Test cases: [count]
-- Coverage: [%]
-- Pass rate: [%]
-
-### Linting
-- clang-tidy errors: [count]
-- cppcheck errors: [count]
-- Memory leaks: [count] (Valgrind)
-- Status: [Pass/Fail]
-
-### Lessons Learned Applied
-[List relevant lessons that were checked and applied]
-
-### Status
-[Ready for review | Needs work]
+const result: AgentResult<DevelopmentData> = {
+    status: 'success',
+    summary: 'Implemented memory manager with RAII, 94% coverage',
+    nextPhase: 'code-review',
+    criticalFindings: [],
+    data: {
+        filesCreated: ['memory_manager.h', 'memory_manager.cpp', 'memory_manager_test.cpp'],
+        linesOfCode: 320,
+        classesImplemented: 2,
+        tests: {
+            files: ['memory_manager_test.cpp'],
+            cases: 14,
+            coverage: 94,
+            passRate: 100
+        },
+        linting: { clangTidyErrors: 0, cppcheckErrors: 0, memoryLeaks: 0, status: 'pass' },
+        lessonsApplied: ['LESSON-2024-007: Use smart pointers for owned resources']
+    }
+};
 ```

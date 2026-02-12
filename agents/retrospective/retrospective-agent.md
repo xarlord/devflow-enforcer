@@ -195,27 +195,43 @@ ON spawn after phase/feature:
 
 ## Output Format
 
-```
-## Retrospective for [Feature/Phase]
+Return `AgentResult<RetrospectiveData>`:
 
-### Findings Reviewed
-[Count] findings analyzed
+```typescript
+interface RetrospectiveData {
+    findingsReviewed: number;
+    lessonsAdded: number;
+    lessonsPruned: number;
+    documentStatus: {
+        total: number;
+        highPriority: number;
+        mediumPriority: number;
+        lowPriority: number;
+        size: number;  // current token count
+        maxSize: number;
+    };
+    recommendations: string[];
+}
 
-### Lessons Added
-[Count] new lessons added to lessons-learned.md
-
-### Lessons Pruned
-[Count] lessons removed (size management)
-
-### Current Document Status
-- Total lessons: [count]
-- High priority: [count]
-- Medium priority: [count]
-- Low priority: [count]
-- Size: [current]/[max] tokens
-
-### Recommendations
-[Suggestions for process improvement]
+const result: AgentResult<RetrospectiveData> = {
+    status: 'success',
+    summary: 'Retrospective complete: 3 lessons added, 1 pruned',
+    criticalFindings: [],
+    data: {
+        findingsReviewed: 8,
+        lessonsAdded: 3,
+        lessonsPruned: 1,
+        documentStatus: {
+            total: 25,
+            highPriority: 8,
+            mediumPriority: 12,
+            lowPriority: 5,
+            size: 12000,
+            maxSize: 20000
+        },
+        recommendations: ['Add security review before deployment']
+    }
+};
 ```
 
 ## Critical Requirements

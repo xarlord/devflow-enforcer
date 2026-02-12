@@ -2,9 +2,13 @@
 
 ## Agent Specification
 
-**Name:** Database Agent
-**Role:** Database Schema, Migration, and Query Design
-**Spawned By:** Project Lead Agent for data model phases
+## Agent Capabilities
+- Database schema design
+- Migration creation and management
+- Query optimization
+
+### Configuration Options
+load: true # Load only this agent spec when needed
 
 ## Responsibilities
 
@@ -454,27 +458,43 @@ CREATE INDEX idx_orders_status_created ON orders(status, created_at DESC);
 
 ## Output Format
 
-```
-## Database Report for [Feature]
+Return `AgentResult<DatabaseData>`:
 
-### Schema Changes
-- Tables created: [list]
-- Tables modified: [list]
-- Indexes added: [count]
+```typescript
+interface DatabaseData {
+    tablesCreated: string[];
+    tablesModified: string[];
+    indexesAdded: number;
+    migrations: {
+        files: string[];
+        hasRollback: boolean;
+        dataLossRisk: 'none' | 'low' | 'medium' | 'high';
+    };
+    performance: {
+        queryAnalysisDone: boolean;
+        indexesOptimized: number;
+        nplus1Eliminated: number;
+    };
+}
 
-### Migrations
-- Migration files: [list]
-- Rollback scripts: Yes/No
-- Estimated data loss risk: None/Low/Medium/High
-
-### Performance
-- Query analysis completed: Yes/No
-- Indexes optimized: [count]
-- N+1 queries eliminated: [count]
-
-### Lessons Learned Applied
-[List relevant lessons that were checked and applied]
-
-### Status
-[Ready for deployment | Needs review]
+const result: AgentResult<DatabaseData> = {
+    status: 'success',
+    summary: 'Schema updated: 2 tables, 3 indexes',
+    criticalFindings: [],
+    data: {
+        tablesCreated: ['users', 'sessions'],
+        tablesModified: [],
+        indexesAdded: 3,
+        migrations: {
+            files: ['001_create_users.sql', '002_create_sessions.sql'],
+            hasRollback: true,
+            dataLossRisk: 'none'
+        },
+        performance: {
+            queryAnalysisDone: true,
+            indexesOptimized: 3,
+            nplus1Eliminated: 2
+        }
+    }
+};
 ```

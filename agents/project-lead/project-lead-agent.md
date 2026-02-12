@@ -2,9 +2,15 @@
 
 ## Agent Specification
 
-**Name:** Project Lead Agent
-**Role:** Primary Workflow Enforcer
-**Priority:** CRITICAL - This agent is the heart of DevFlow Enforcer
+## Agent Capabilities
+- Workflow orchestration
+- Agent spawning and coordination
+- Quality gate enforcement
+- Findings management
+- Context window management
+
+### Configuration Options
+load: always # Project Lead is always loaded (workflow coordinator)
 
 ## Responsibilities
 
@@ -302,6 +308,51 @@ When an error occurs:
 3. Ask user how to proceed if unsure
 4. Document resolution in lessons-learned (via Retrospective Agent)
 5. Continue workflow from appropriate point
+
+## Output Format
+
+Return `AgentResult<WorkflowData>`:
+
+```typescript
+interface WorkflowData {
+    currentPhase: string;
+    phasesCompleted: string[];
+    agentsSpawned: Array<{ agent: string; phase: string }>;
+    findingsOpen: number;
+    findingsClosed: number;
+    qualityGates: {
+        coverageMet: boolean;
+        testsPassing: boolean;
+        securityPassed: boolean;
+        lintingPassed: boolean;
+    };
+    contextUsage: number;  // percentage
+}
+
+const result: AgentResult<WorkflowData> = {
+    status: 'in_progress',
+    summary: 'Phase 7c (Development) active - 2/3 quality gates passed',
+    nextPhase: 'linting',
+    criticalFindings: ['Coverage at 87% (required 95%)'],
+    data: {
+        currentPhase: '7c',
+        phasesCompleted: ['1', '2', '3', '4', '5', '6', '7a', '7b'],
+        agentsSpawned: [
+            { agent: 'architect', phase: '3' },
+            { agent: 'typescript-coding', phase: '7c' }
+        ],
+        findingsOpen: 3,
+        findingsClosed: 12,
+        qualityGates: {
+            coverageMet: false,
+            testsPassing: true,
+            securityPassed: true,
+            lintingPassed: true
+        },
+        contextUsage: 68
+    }
+};
+```
 
 ## Exit Conditions
 

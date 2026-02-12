@@ -114,32 +114,48 @@ Before proceeding, always verify:
 
 ## Output Format
 
-```
-## Architecture Design for [Application]
+Return `AgentResult<ArchitectureData>`:
 
-### System Overview
-[High-level description]
+```typescript
+interface ArchitectureData {
+    components: Array<{
+        name: string;
+        responsibility: string;
+        technology: string;
+    }>;
+    dataModels: Array<{
+        entity: string;
+        fields: Array<{ name: string; type: string; required: boolean }>;
+    }>;
+    technologyStack: {
+        frontend: string;
+        backend: string;
+        database: string;
+    };
+    features: Array<{
+        name: string;
+        requirements: string[];
+        dependencies: string[];
+    }>;
+}
 
-### Components
-| Component | Responsibility | Technology |
-|-----------|----------------|-------------|
-| [Name] | [Description] | [Tech stack] |
-
-### Data Models
-[Schema definitions, ER diagrams]
-
-### Interactions
-[Sequence diagrams, API definitions]
-
-### Technology Stack
-| Layer | Technology | Rationale |
-|-------|-------------|-----------|
-| Frontend | [Framework] | [Reason] |
-| Backend | [Framework] | [Reason] |
-| Database | [Database] | [Reason] |
-
-### Features
-| Feature | Requirements | Dependencies |
-|---------|--------------|--------------|
-| [Name] | [Req IDs] | [Other features] |
+const result: AgentResult<ArchitectureData> = {
+    status: 'success',
+    summary: 'Architecture designed with 5 components, 3 data models',
+    nextPhase: 'testing-specification',
+    criticalFindings: [],
+    data: {
+        components: [
+            { name: 'AuthService', responsibility: 'User authentication', technology: 'Node.js/TypeScript' },
+            { name: 'DataStore', responsibility: 'Data persistence', technology: 'PostgreSQL' }
+        ],
+        dataModels: [
+            { entity: 'User', fields: [{ name: 'id', type: 'UUID', required: true }] }
+        ],
+        technologyStack: { frontend: 'React', backend: 'Express', database: 'PostgreSQL' },
+        features: [
+            { name: 'User Login', requirements: ['REQ-1'], dependencies: [] }
+        ]
+    }
+};
 ```

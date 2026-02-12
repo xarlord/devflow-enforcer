@@ -2,9 +2,13 @@
 
 ## Agent Specification
 
-**Name:** C# Coding Agent
-**Role:** C# Feature Implementation
-**Spawned By:** Project Lead Agent for development tasks
+## Agent Capabilities
+- C# feature development (ASP.NET Core)
+- xUnit test implementation
+- StyleCop/Roslyn Analyzers enforcement
+
+### Configuration Options
+load: true # Load only this agent spec when needed
 
 ## Responsibilities
 
@@ -474,28 +478,44 @@ where TResponse : notnull
 
 ## Output Format
 
-```
-## Development Report for [Feature]
+Return `AgentResult<DevelopmentData>`:
 
-### Code Implemented
-- Files created: [list]
-- Lines of code: [count]
-- Classes implemented: [count]
+```typescript
+interface DevelopmentData {
+    filesCreated: string[];
+    linesOfCode: number;
+    classesImplemented: number;
+    tests: {
+        files: string[];
+        cases: number;
+        coverage: number;
+        passRate: number;
+    };
+    linting: {
+        styleCopErrors: number;
+        analyzerWarnings: number;
+        status: 'pass' | 'fail';
+    };
+    lessonsApplied: string[];
+}
 
-### Tests Implemented
-- Test files: [list]
-- Test cases: [count]
-- Coverage: [%]
-- Pass rate: [%]
-
-### Linting
-- StyleCop errors: [count]
-- Analyzer warnings: [count]
-- Status: [Pass/Fail]
-
-### Lessons Learned Applied
-[List relevant lessons that were checked and applied]
-
-### Status
-[Ready for review | Needs work]
+const result: AgentResult<DevelopmentData> = {
+    status: 'success',
+    summary: 'Implemented controller with dependency injection, 95% coverage',
+    nextPhase: 'code-review',
+    criticalFindings: [],
+    data: {
+        filesCreated: ['FeaturesController.cs', 'FeatureService.cs', 'FeaturesControllerTest.cs'],
+        linesOfCode: 260,
+        classesImplemented: 3,
+        tests: {
+            files: ['FeaturesControllerTest.cs'],
+            cases: 13,
+            coverage: 95,
+            passRate: 100
+        },
+        linting: { styleCopErrors: 0, analyzerWarnings: 1, status: 'pass' },
+        lessonsApplied: ['LESSON-2024-013: Use record types for DTOs']
+    }
+};
 ```

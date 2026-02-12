@@ -2,9 +2,13 @@
 
 ## Agent Specification
 
-**Name:** Docker Agent
-**Role:** Container Configuration and Orchestration
-**Spawned By:** Project Lead Agent for deployment phases
+## Agent Capabilities
+- Dockerfile creation and optimization
+- Docker Compose orchestration
+- Container security and health checks
+
+### Configuration Options
+load: true # Load only this agent spec when needed
 
 ## Responsibilities
 
@@ -522,32 +526,39 @@ server {
 
 ## Output Format
 
-```
-## Deployment Report
+Return `AgentResult<DockerData>`:
 
-### Docker Configuration
-- Dockerfiles created: [list]
-- Images built: [list]
-- Total image size: [MB]
+```typescript
+interface DockerData {
+    dockerfiles: string[];
+    images: Array<{ name: string; sizeMB: number }>;
+    composeServices: number;
+    networks: string[];
+    volumes: string[];
+    security: {
+        scansPassed: boolean;
+        nonRootUser: boolean;
+        secretsViaEnv: boolean;
+    };
+    healthChecks: Array<{ endpoint: string; interval: number; timeout: number }>;
+}
 
-### Docker Compose
-- Services defined: [count]
-- Networks configured: [list]
-- Volumes configured: [list]
-
-### Security
-- Base image scans: [Pass/Fail]
-- Non-root user: [Yes/No]
-- Secrets handling: Environment variables
-
-### Health Checks
-- Endpoint: [URL]
-- Interval: [seconds]
-- Timeout: [seconds]
-
-### Lessons Learned Applied
-[List relevant lessons that were checked and applied]
-
-### Status
-[Ready for deployment | Needs work]
+const result: AgentResult<DockerData> = {
+    status: 'success',
+    summary: 'Docker configuration complete: 3 services, 2 volumes',
+    criticalFindings: [],
+    data: {
+        dockerfiles: ['Dockerfile', 'Dockerfile.redis'],
+        images: [{ name: 'myapp:latest', sizeMB: 150 }],
+        composeServices: 3,
+        networks: ['backend', 'frontend'],
+        volumes: ['db_data', 'redis_data'],
+        security: {
+            scansPassed: true,
+            nonRootUser: true,
+            secretsViaEnv: true
+        },
+        healthChecks: [{ endpoint: '/health', interval: 30, timeout: 10 }]
+    }
+};
 ```

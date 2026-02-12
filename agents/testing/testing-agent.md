@@ -2,9 +2,14 @@
 
 ## Agent Specification
 
-**Name:** Testing Agent
-**Role:** Test Execution and Quality Metrics Enforcement
-**Spawned By:** Project Lead Agent for all testing phases
+## Agent Capabilities
+- Test planning and specification
+- Unit test execution
+- Integration testing
+- BDD testing
+
+### Configuration Options
+load: true # Load only this agent spec when needed
 
 ## Responsibilities
 
@@ -88,26 +93,37 @@ Per tech stack selection:
 
 ## Output Format
 
-```
-## Test Results for [Feature]
+Return `AgentResult<TestData>`:
 
-### Unit Tests
-- Tests Run: [count]
-- Tests Passed: [count]
-- Tests Failed: [count]
-- Pass Rate: [%]
-- Coverage: [%]
-- Status: [PASS | FAIL - loops back to Development]
+```typescript
+interface TestData {
+    unitTests: {
+        run: number;
+        passed: number;
+        failed: number;
+        coverage: number;
+        passRate: number;
+    };
+    integrationTests: {
+        run: number;
+        passed: number;
+        failed: number;
+    };
+    bddTests: {
+        scenarios: number;
+        passed: number;
+        failed: number;
+    };
+}
 
-### Integration Tests
-- Tests Run: [count]
-- Tests Passed: [count]
-- Tests Failed: [count]
-- Status: [PASS | FAIL]
-
-### BDD Tests
-- Scenarios Run: [count]
-- Scenarios Passed: [count]
-- Scenarios Failed: [count]
-- Status: [PASS | FAIL]
+const result: AgentResult<TestData> = {
+    status: 'failure',
+    summary: 'Coverage at 87%, below 95% threshold',
+    criticalFindings: ['Coverage: 87% (required: 95%)', '2 tests failing'],
+    data: {
+        unitTests: { run: 150, passed: 148, failed: 2, coverage: 87, passRate: 98.7 },
+        integrationTests: { run: 20, passed: 20, failed: 0 },
+        bddTests: { scenarios: 10, passed: 10, failed: 0 }
+    }
+};
 ```

@@ -2,9 +2,13 @@
 
 ## Agent Specification
 
-**Name:** Rust Coding Agent
-**Role:** Rust Feature Implementation
-**Spawned By:** Project Lead Agent for development tasks
+## Agent Capabilities
+- Rust feature development
+- Unit test implementation
+- clippy/rustfmt enforcement
+
+### Configuration Options
+load: true # Load only this agent spec when needed
 
 ## Responsibilities
 
@@ -427,28 +431,44 @@ where
 
 ## Output Format
 
-```
-## Development Report for [Feature]
+Return `AgentResult<DevelopmentData>`:
 
-### Code Implemented
-- Files created: [list]
-- Lines of code: [count]
-- Modules implemented: [count]
+```typescript
+interface DevelopmentData {
+    filesCreated: string[];
+    linesOfCode: number;
+    modulesImplemented: number;
+    tests: {
+        files: string[];
+        cases: number;
+        coverage: number;
+        passRate: number;
+    };
+    linting: {
+        clippyWarnings: number;
+        rustfmtPassed: boolean;
+        status: 'pass' | 'fail';
+    };
+    lessonsApplied: string[];
+}
 
-### Tests Implemented
-- Test files: [list]
-- Test cases: [count]
-- Coverage: [%]
-- Pass rate: [%]
-
-### Linting
-- clippy warnings: [count]
-- rustfmt check: [Pass/Fail]
-- Status: [Pass/Fail]
-
-### Lessons Learned Applied
-[List relevant lessons that were checked and applied]
-
-### Status
-[Ready for review | Needs work]
+const result: AgentResult<DevelopmentData> = {
+    status: 'success',
+    summary: 'Implemented async handler with Result types, 97% coverage',
+    nextPhase: 'code-review',
+    criticalFindings: [],
+    data: {
+        filesCreated: ['handler.rs', 'model.rs', 'handler_test.rs'],
+        linesOfCode: 240,
+        modulesImplemented: 2,
+        tests: {
+            files: ['handler_test.rs'],
+            cases: 16,
+            coverage: 97,
+            passRate: 100
+        },
+        linting: { clippyWarnings: 0, rustfmtPassed: true, status: 'pass' },
+        lessonsApplied: ['LESSON-2024-011: Use Result<> for error handling']
+    }
+};
 ```

@@ -2,9 +2,13 @@
 
 ## Agent Specification
 
-**Name:** Java Coding Agent
-**Role:** Java Feature Implementation
-**Spawned By:** Project Lead Agent for development tasks
+## Agent Capabilities
+- Java feature development (Spring Boot)
+- JUnit test implementation
+- Checkstyle/SpotBugs enforcement
+
+### Configuration Options
+load: true # Load only this agent spec when needed
 
 ## Responsibilities
 
@@ -310,29 +314,45 @@ public class GlobalExceptionHandler {
 
 ## Output Format
 
-```
-## Development Report for [Feature]
+Return `AgentResult<DevelopmentData>`:
 
-### Code Implemented
-- Files created: [list]
-- Lines of code: [count]
-- Classes implemented: [count]
+```typescript
+interface DevelopmentData {
+    filesCreated: string[];
+    linesOfCode: number;
+    classesImplemented: number;
+    tests: {
+        files: string[];
+        cases: number;
+        coverage: number;
+        passRate: number;
+    };
+    linting: {
+        checkstyleErrors: number;
+        spotBugs: number;
+        pmdViolations: number;
+        status: 'pass' | 'fail';
+    };
+    lessonsApplied: string[];
+}
 
-### Tests Implemented
-- Test files: [list]
-- Test cases: [count]
-- Coverage: [%]
-- Pass rate: [%]
-
-### Linting
-- Checkstyle errors: [count]
-- SpotBugs bugs: [count]
-- PMD violations: [count]
-- Status: [Pass/Fail]
-
-### Lessons Learned Applied
-[List relevant lessons that were checked and applied]
-
-### Status
-[Ready for review | Needs work]
+const result: AgentResult<DevelopmentData> = {
+    status: 'success',
+    summary: 'Implemented user service with 95% coverage',
+    nextPhase: 'code-review',
+    criticalFindings: [],
+    data: {
+        filesCreated: ['UserService.java', 'UserRepository.java', 'UserServiceTest.java'],
+        linesOfCode: 280,
+        classesImplemented: 3,
+        tests: {
+            files: ['UserServiceTest.java'],
+            cases: 12,
+            coverage: 95,
+            passRate: 100
+        },
+        linting: { checkstyleErrors: 0, spotBugs: 0, pmdViolations: 1, status: 'pass' },
+        lessonsApplied: ['LESSON-2024-005: Use @Nullable for optional returns']
+    }
+};
 ```

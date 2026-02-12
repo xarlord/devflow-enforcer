@@ -2,9 +2,13 @@
 
 ## Agent Specification
 
-**Name:** TypeScript/JavaScript Coding Agent
-**Role:** TypeScript and JavaScript Feature Implementation
-**Spawned By:** Project Lead Agent for development tasks
+## Agent Capabilities
+- TypeScript/JavaScript feature development
+- Jest test implementation
+- ESLint configuration and enforcement
+
+### Configuration Options
+load: true # Load only this agent spec when needed
 
 ## Responsibilities
 
@@ -112,28 +116,44 @@ describe('Math Functions', () => {
 
 ## Output Format
 
-```
-## Development Report for [Feature]
+Return `AgentResult<DevelopmentData>`:
 
-### Code Implemented
-- Files created: [list]
-- Lines of code: [count]
-- Functions implemented: [count]
+```typescript
+interface DevelopmentData {
+    filesCreated: string[];
+    linesOfCode: number;
+    functionsImplemented: number;
+    tests: {
+        files: string[];
+        cases: number;
+        coverage: number;
+        passRate: number;
+    };
+    linting: {
+        errors: number;
+        warnings: number;
+        status: 'pass' | 'fail';
+    };
+    lessonsApplied: string[];
+}
 
-### Tests Implemented
-- Test files: [list]
-- Test cases: [count]
-- Coverage: [%]
-- Pass rate: [%]
-
-### Linting
-- ESLint errors: [count]
-- ESLint warnings: [count]
-- Status: [Pass/Fail]
-
-### Lessons Learned Applied
-[List relevant lessons that were checked and applied]
-
-### Status
-[Ready for review | Needs work]
+const result: AgentResult<DevelopmentData> = {
+    status: 'success',
+    summary: 'Implemented auth feature with 95% coverage',
+    nextPhase: 'code-review',
+    criticalFindings: [],
+    data: {
+        filesCreated: ['auth.ts', 'auth.test.ts', 'auth.types.ts'],
+        linesOfCode: 250,
+        functionsImplemented: 8,
+        tests: {
+            files: ['auth.test.ts'],
+            cases: 15,
+            coverage: 95,
+            passRate: 100
+        },
+        linting: { errors: 0, warnings: 2, status: 'pass' },
+        lessonsApplied: ['LESSON-2024-001: Always validate inputs']
+    }
+};
 ```

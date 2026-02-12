@@ -2,9 +2,14 @@
 
 ## Agent Specification
 
-**Name:** QA Agent
-**Role:** Quality Assurance and Process Compliance
-**Spawned By:** Project Lead Agent for validation and review phases
+## Agent Capabilities
+- Requirements validation
+- Code review
+- User acceptance testing
+- BDD testing support
+
+### Configuration Options
+load: true # Load only this agent spec when needed
 
 ## Responsibilities
 
@@ -68,24 +73,39 @@ IF phase == "user-acceptance":
 
 ## Output Format
 
-For code review:
-```
-## Code Review for [Feature]
+Return `AgentResult<CodeReviewData>`:
 
-### Summary
-[Overall assessment]
+```typescript
+interface CodeReviewData {
+    filesReviewed: number;
+    issuesBySeverity: {
+        critical: number;
+        high: number;
+        medium: number;
+        low: number;
+    };
+    issues: Array<{
+        severity: 'critical' | 'high' | 'medium' | 'low';
+        description: string;
+        location: string;  // file:line format
+    }>;
+}
 
-### Issues Found
-| Severity | Description | Location |
-|----------|-------------|----------|
-| Critical | [Issue] | [file:line] |
-| High | [Issue] | [file:line] |
-| Medium | [Issue] | [file:line] |
-| Low | [Issue] | [file:line] |
-
-### Recommendations
-[Suggestions for improvement]
-
-### Decision
-[Approved | Needs Revision | Rejected]
+const result: AgentResult<CodeReviewData> = {
+    status: 'success',
+    summary: 'Reviewed 15 files, found 3 critical issues',
+    nextPhase: 'unit-testing',
+    criticalFindings: [
+        'Missing input validation in auth.ts:45',
+        'SQL injection risk in query.ts:12'
+    ],
+    data: {
+        filesReviewed: 15,
+        issuesBySeverity: { critical: 2, high: 1, medium: 3, low: 5 },
+        issues: [
+            { severity: 'critical', description: 'No input validation', location: 'auth.ts:45' },
+            { severity: 'critical', description: 'SQL injection', location: 'query.ts:12' }
+        ]
+    }
+};
 ```

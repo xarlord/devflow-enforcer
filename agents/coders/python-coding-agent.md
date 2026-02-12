@@ -2,9 +2,13 @@
 
 ## Agent Specification
 
-**Name:** Python Coding Agent
-**Role:** Python Feature Implementation
-**Spawned By:** Project Lead Agent for development tasks
+## Agent Capabilities
+- Python feature development
+- pytest test implementation
+- Ruff linting configuration
+
+### Configuration Options
+load: true # Load only this agent spec when needed
 
 ## Responsibilities
 
@@ -146,28 +150,44 @@ omit = ["tests/*", "__init__.py"]
 
 ## Output Format
 
-```
-## Development Report for [Feature]
+Return `AgentResult<DevelopmentData>`:
 
-### Code Implemented
-- Files created: [list]
-- Lines of code: [count]
-- Functions implemented: [count]
+```typescript
+interface DevelopmentData {
+    filesCreated: string[];
+    linesOfCode: number;
+    functionsImplemented: number;
+    tests: {
+        files: string[];
+        cases: number;
+        coverage: number;
+        passRate: number;
+    };
+    linting: {
+        errors: number;
+        warnings: number;
+        status: 'pass' | 'fail';
+    };
+    lessonsApplied: string[];
+}
 
-### Tests Implemented
-- Test files: [list]
-- Test cases: [count]
-- Coverage: [%]
-- Pass rate: [%]
-
-### Linting
-- Ruff errors: [count]
-- Ruff warnings: [count]
-- Status: [Pass/Fail]
-
-### Lessons Learned Applied
-[List relevant lessons that were checked and applied]
-
-### Status
-[Ready for review | Needs work]
+const result: AgentResult<DevelopmentData> = {
+    status: 'success',
+    summary: 'Implemented auth feature with 96% coverage',
+    nextPhase: 'code-review',
+    criticalFindings: [],
+    data: {
+        filesCreated: ['auth.py', 'test_auth.py', 'auth_models.py'],
+        linesOfCode: 230,
+        functionsImplemented: 7,
+        tests: {
+            files: ['test_auth.py'],
+            cases: 18,
+            coverage: 96,
+            passRate: 100
+        },
+        linting: { errors: 0, warnings: 1, status: 'pass' },
+        lessonsApplied: ['LESSON-2024-003: Use type hints for all functions']
+    }
+};
 ```

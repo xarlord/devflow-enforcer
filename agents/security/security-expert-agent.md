@@ -116,39 +116,53 @@ PHASE: Static Analysis & Security Check
 
 ## Output Format
 
-```
-## Security Review for [Feature]
+Return `AgentResult<SecurityData>`:
 
-### Summary
-[Overall security posture]
+```typescript
+interface SecurityData {
+    dependencyVulnerabilities: Array<{
+        severity: 'critical' | 'high' | 'medium' | 'low';
+        package: string;
+        version: string;
+        cve: string;
+        action: string;
+    }>;
+    codeIssues: Array<{
+        severity: 'critical' | 'high' | 'medium' | 'low';
+        file: string;
+        line: number;
+        issue: string;
+        recommendation: string;
+    }>;
+    secretsFound: Array<{
+        file: string;
+        line: number;
+        type: string;
+    }>;
+    owaspChecks: Array<{
+        risk: string;
+        status: 'pass' | 'fail';
+        notes: string;
+    }>;
+}
 
-### Dependency Vulnerabilities
-| Severity | Package | Version | CVE | Action |
-|----------|---------|---------|-----|--------|
-| [Level] | [name] | [version] | [id] | [Update to X] |
-
-### Code Security Issues
-| Severity | File | Line | Issue | Recommendation |
-|----------|------|------|-------|----------------|
-| [Level] | [path] | [#] | [desc] | [Fix] |
-
-### Secrets Detection
-| File | Line | Type | Action |
-|------|------|------|--------|
-| [path] | [#] | [secret type] | [Remove immediately] |
-
-### OWASP Top 10 Check
-| Risk | Status | Notes |
-|------|--------|-------|
-| A01:2021 - Broken Access Control | [Pass/Fail] | [Notes] |
-| A02:2021 - Cryptographic Failures | [Pass/Fail] | [Notes] |
-| ... | ... | ... |
-
-### Decision
-[Approved | Needs Remediation | Rejected]
-
-### Remediation Steps
-1. [Step 1]
-2. [Step 2]
-...
+const result: AgentResult<SecurityData> = {
+    status: 'failure',
+    summary: 'Found 1 critical vulnerability and 2 exposed secrets',
+    criticalFindings: ['CVE-2024-1234 in lodash@4.17.15', 'AWS key in config.ts:12'],
+    nextPhase: null,
+    data: {
+        dependencyVulnerabilities: [
+            { severity: 'critical', package: 'lodash', version: '4.17.15', cve: 'CVE-2024-1234', action: 'Update to 4.17.21' }
+        ],
+        codeIssues: [],
+        secretsFound: [
+            { file: 'config.ts', line: 12, type: 'AWS Access Key' }
+        ],
+        owaspChecks: [
+            { risk: 'A01:2021', status: 'pass', notes: '' },
+            { risk: 'A02:2021', status: 'fail', notes: 'Hardcoded secrets found' }
+        ]
+    }
+};
 ```
