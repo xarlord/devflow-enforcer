@@ -1,56 +1,64 @@
 {
-  "$schema": "http://registry.npmjs.org/claude/marketplace-plugin/v1",
-  "name": "DevFlow Enforcer",
-  "version": "2.0.0",
-  "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 14-phase quality gates",
-  "keywords": [
-    "claude-code",
-    "claude",
-    "plugin",
-    "workflow",
-    "devops",
-    "sdlc",
-    "quality-gates",
-    "testing",
-    "code-review",
-    "context-optimization",
-    "software-development-lifecycle"
-  ],
-  "license": "MIT",
-  "author": {
-    "name": "Sefa Ocakli",
-    "email": "sefa.ocakli@daiichi.local",
+  "name": "devflow-enforcer",
+  "owner": {
+    "name": "xarlord",
     "url": "https://github.com/xarlord"
   },
-  "contributors": [
+  "plugins": [
     {
-      "name": "Claude (Anthropic)",
-      "email": "noreply@anthropic.com"
+      "name": "devflow-enforcer",
+      "displayName": "DevFlow Enforcer",
+      "version": "2.0.0",
+      "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 14-phase quality gates",
+      "main": "index.js",
+      "keywords": [
+        "claude-code",
+        "claude",
+        "plugin",
+        "workflow",
+        "devops",
+        "sdlc",
+        "quality-gates",
+        "testing",
+        "code-review",
+        "context-optimization",
+        "software-development-lifecycle"
+      ],
+      "license": "MIT",
+      "author": {
+        "name": "Sefa Ocakli",
+        "email": "sefa.ocakli@daiichi.local",
+        "url": "https://github.com/xarlord"
+      },
+      "claude": {
+        "minVersion": "1.0",
+        "requires": [],
+        "provides": {
+          "workflow": "Enforces 14-phase software development process",
+          "agents": "15 specialized agents for different development tasks",
+          "documentation": "Auto-generated documentation and summaries"
+        }
+      },
+      "manifests": {
+        "main": "index.js",
+        "hooks": {},
+        "worker": [],
+        "assets": [],
+        "styles": []
+      },
+      "settings": {
+        "activation": "automatic",
+        "contextThreshold": 80,
+        "qualityRequirements": {
+          "coverageThreshold": 95,
+          "passRateThreshold": 100
+        }
+      },
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/xarlord/devflow-enforcer",
+        "directory": ".claude-plugin"
+      }
     }
-  ],
-  "claude": {
-    "minVersion": "1.0",
-    "requires": [],
-    "provides": {
-      "workflow": "Enforces 14-phase software development process",
-      "agents": "15 specialized agents for different development tasks",
-      "documentation": "Auto-generated documentation and summaries"
-    }
-  },
-  "manifests": {
-    "main": "index.js"
-  },
-  "settings": {
-    "activation": "automatic",
-    "contextThreshold": 80,
-    "qualityRequirements": {
-      "coverageThreshold": 95,
-      "passRateThreshold": 100
-    }
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/xarlord/devflow-enforcer",
-    "directory": ".claude-plugin"
-  }
+  ]
 }
