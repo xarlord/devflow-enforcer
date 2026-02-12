@@ -1,5 +1,62 @@
 # Installing DevFlow Enforcer v2.0 for Claude Code
 
+## Quick Install (Recommended - npm)
+
+### Step 1: Install via npm
+
+```bash
+# Install from npm registry
+npm install @xarlord/devflow-enforcer
+
+# Or install directly from GitHub
+npm install git+https://github.com/xarlord/devflow-enforcer.git
+
+# Or use npx for one-time install without global install
+npx @xarlord/devflow-enforcer
+```
+
+### Step 2: Verify Installation
+
+```bash
+# Run verification script
+npm run verify
+
+# Expected output: Installation verified successfully!
+```
+
+### Step 3: Restart Claude Code
+
+Close and restart Claude Code for plugin to be recognized. The plugin will automatically activate on software development tasks.
+
+---
+
+## Manual Install (Alternative - without npm)
+
+### Step 1: Clone Repository
+
+```bash
+# Clone repository
+git clone https://github.com/xarlord/devflow-enforcer.git
+cd devflow-enforcer
+```
+
+### Step 2: Copy to Claude Code Plugins
+
+```bash
+# Windows PowerShell
+Copy-Item -Path "$env:USERPROFILE\.claude\plugins\devflow-enforcer" -Recurse -Force
+
+# macOS/Linux
+cp -r ~/devflow-enforcer ~/.claude/plugins/devflow-enforcer
+
+# Verify installation
+ls ~/.claude/plugins/devflow-enforcer
+```
+
+### Step 3: Restart Claude Code
+
+Close and restart Claude Code for plugin to be recognized.
+
 ## Quick Install
 
 ### Step 1: Clone Repository

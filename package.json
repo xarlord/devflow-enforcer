@@ -1,0 +1,55 @@
+{
+  "name": "@xarlord/devflow-enforcer",
+  "version": "2.0.0",
+  "description": "Context window optimized workflow enforcement plugin for Claude Code - enforces 14-phase software development process with ~78% token savings",
+  "keywords": [
+    "claude-code",
+    "claude",
+    "plugin",
+    "workflow",
+    "workflow-enforcement",
+    "context-optimization",
+    "agent-system",
+    "devops",
+    "quality-gates",
+    "software-development"
+  ],
+  "homepage": "https://github.com/xarlord/devflow-enforcer#readme",
+  "bugs": {
+    "url": "https://github.com/xarlord/devflow-enforcer/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xarlord/devflow-enforcer.git"
+  },
+  "license": "MIT",
+  "author": "Sefa Ocakli <sefa.ocakli@daiichi.local>",
+  "contributors": [
+    "Claude (glm-4.7) <noreply@anthropic.com>"
+  ],
+  "claude": {
+    "pluginType": "workflow-enforcement",
+    "minClaudeCodeVersion": "1.0",
+    "capabilities": [
+      "workflow-orchestration",
+      "agent-spawning",
+      "quality-gate-enforcement",
+      "context-optimization",
+      "documentation-generation"
+    ]
+  },
+  "files": [
+    "agents",
+    "core",
+    "docs",
+    "README.md",
+    "LICENSE",
+    "INSTALL-WORKFLOW.md"
+  ],
+  "scripts": {
+    "postinstall": "node scripts/install.js",
+    "preuninstall": "node scripts/uninstall.js",
+    "test": "node tests/test-optimization.js",
+    "verify": "node scripts/verify.js"
+  }
+}
