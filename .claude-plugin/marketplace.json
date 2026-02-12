@@ -1,16 +1,27 @@
 {
-  "name": "devflow-enforcer",
+  "name": "devflow-enforcer-marketplace",
   "owner": {
-    "name": "xarlord",
-    "url": "https://github.com/xarlord"
+    "name": "Sefa Ocakli",
+    "email": "sefa.ocakli@daiichi.local"
+  },
+  "metadata": {
+    "description": "DevFlow Enforcer plugin marketplace - Context-optimized workflow enforcement for Claude Code",
+    "version": "1.0.0"
   },
   "plugins": [
     {
       "name": "devflow-enforcer",
       "displayName": "DevFlow Enforcer",
-      "version": "2.0.0",
+      "source": "./",
       "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 14-phase quality gates",
-      "main": "index.js",
+      "version": "2.0.0",
+      "homepage": "https://github.com/xarlord/devflow-enforcer",
+      "repository": "https://github.com/xarlord/devflow-enforcer",
+      "license": "MIT",
+      "author": {
+        "name": "Sefa Ocakli",
+        "email": "sefa.ocakli@daiichi.local"
+      },
       "keywords": [
         "claude-code",
         "claude",
@@ -24,41 +35,8 @@
         "context-optimization",
         "software-development-lifecycle"
       ],
-      "license": "MIT",
-      "author": {
-        "name": "Sefa Ocakli",
-        "email": "sefa.ocakli@daiichi.local",
-        "url": "https://github.com/xarlord"
-      },
-      "claude": {
-        "minVersion": "1.0",
-        "requires": [],
-        "provides": {
-          "workflow": "Enforces 14-phase software development process",
-          "agents": "15 specialized agents for different development tasks",
-          "documentation": "Auto-generated documentation and summaries"
-        }
-      },
-      "manifests": {
-        "main": "index.js",
-        "hooks": {},
-        "worker": [],
-        "assets": [],
-        "styles": []
-      },
-      "settings": {
-        "activation": "automatic",
-        "contextThreshold": 80,
-        "qualityRequirements": {
-          "coverageThreshold": 95,
-          "passRateThreshold": 100
-        }
-      },
-      "repository": {
-        "type": "git",
-        "url": "https://github.com/xarlord/devflow-enforcer",
-        "directory": ".claude-plugin"
-      }
+      "category": "productivity",
+      "tags": ["workflow", "quality", "testing", "devops"]
     }
   ]
 }
