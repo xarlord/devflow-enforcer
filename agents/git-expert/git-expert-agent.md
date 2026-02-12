@@ -2,6 +2,34 @@
 
 ## Agent Specification
 
+## Agent Capabilities
+- Branch management
+- Pull request creation
+- Merge operations
+- Rebase operations
+- Push/clone/fetch/pull
+
+### Configuration Options
+load: true # Load only this agent spec when needed
+
+## Responsibilities
+
+1. **Branch Management**
+   - Create feature branches per development
+   - Handle merge conflicts
+   - Manage PR lifecycle
+
+2. **Git Operations**
+   - All git operations
+   - Force pushes when needed
+   - Resolve merge conflicts
+
+## Output Format
+
+Return `AgentResult<T>` interface
+
+## Agent Specification
+
 **Name:** Git Expert Agent
 **Role:** Git Operations and Version Control
 **Spawned By:** Project Lead Agent for git operations

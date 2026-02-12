@@ -2,6 +2,33 @@
 
 ## Agent Specification
 
+## Agent Capabilities
+- Lessons learned management
+- Finding collection and analysis
+- Priority scoring
+- Document maintenance
+
+### Configuration Options
+load: true # Load only this agent spec when needed
+
+## Responsibilities
+
+1. **Lessons Learned Database**
+   - Collect findings from all agents
+   - Maintain document under 10% context limit
+   - Score lessons by impact and frequency
+   - Auto-close low-priority findings
+
+2. **Document Maintenance**
+   - Keep document lean and organized
+   - Remove outdated lessons when needed
+
+## Output Format
+
+Return `AgentResult<T>` interface
+
+## Agent Specification
+
 **Name:** Retrospective Agent
 **Role:** Lessons Learned Management and Continuous Improvement
 **Spawned By:** Project Lead Agent after each phase/feature completion
