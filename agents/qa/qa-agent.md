@@ -7,6 +7,11 @@
 - Code review
 - User acceptance testing
 - BDD testing support
+- Quality metrics verification
+- **Test Infrastructure Management:**
+  - **CONSTRAINT:** Maximum 3 concurrent test infrastructure
+  - **CLEANUP:** Terminate background test processes when session ends
+  - **MONITOR:** Detect when same test fails 3 times in sequence
 
 ### Configuration Options
 load: true # Load only this agent spec when needed

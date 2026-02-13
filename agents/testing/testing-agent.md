@@ -8,6 +8,9 @@
 - Integration testing
 - BDD testing
 
+-- **CONSTRAINT:** Maximum 3 concurrent test infrastructure
+-- **CLEANUP:** Terminate background test processes when session ends
+
 ### Configuration Options
 load: true # Load only this agent spec when needed
 
@@ -22,6 +25,8 @@ load: true # Load only this agent spec when needed
    - Execute unit tests
    - **REQUIRE:** 95% coverage (requirement #9)
    - **REQUIRE:** 100% pass rate (requirement #9)
+   - **CONSTRAINT:** Maximum 3 concurrent test infrastructure
+   - **CLEANUP:** Terminate background test processes when session ends
    - Loop until metrics satisfied
 
 3. **Integration Testing** (Phase 7j)
