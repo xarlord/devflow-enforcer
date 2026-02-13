@@ -221,6 +221,7 @@ export class RefResolver {
 
     const refs: string[] = [];
     // Match both @ref:name and @ref(name) formats
+Compile regex ONCE before loop to prevent ReDoS vulnerability
     const regex = /@ref[:\(]([a-zA-Z0-9_-]+)\)?/g;
     let match: RegExpExecArray | null;
 

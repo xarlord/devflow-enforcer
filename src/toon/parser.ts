@@ -56,6 +56,8 @@ export interface TOONParseResult {
   };
   errors: ParseError[];
   warnings: ParseWarning[];
+  /** Indicates if parsing had fatal errors that should stop processing */
+  fatal: boolean;
 }
 
 /**
@@ -134,7 +136,7 @@ export class TOONParser {
         message: `File size ${content.length} exceeds maximum ${this.options.maxFileSize}`,
         line: 0
       });
-      return this.createErrorResult(errors, warnings);
+      return this.createErrorResult(errors, warnings, true);
     }
 
     const lines = content.split('\n');
@@ -525,9 +527,10 @@ export class TOONParser {
    * Create error result
    * @param errors - Parse errors
    * @param warnings - Parse warnings
+   * @param fatal - Whether errors are fatal (should stop processing)
    * @returns Error parse result
    */
-  private createErrorResult(errors: ParseError[], warnings: ParseWarning[]): TOONParseResult {
+  private createErrorResult(errors: ParseError[], warnings: ParseWarning[], fatal = false): TOONParseResult {
     return {
       document: {},
       symbols: new Map(),
@@ -537,7 +540,8 @@ export class TOONParser {
         parsedAt: new Date().toISOString()
       },
       errors,
-      warnings
+      warnings,
+      fatal
     };
   }
 }
