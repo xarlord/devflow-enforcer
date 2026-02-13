@@ -338,6 +338,20 @@ export class DevFlowCommands {
   }
 
   /**
+   * Guide user through template completion
+   * @param template - Loaded template
+   * @param context - Wizard context
+   * @returns Completed template result
+   */
+  private async guideTemplate(template: any, context: WizardContext): Promise<{ changes: any[] }> {
+    // For now, just return the template as-is without interactive prompting
+    // In production, this would use the TemplateWizard to guide the user
+    return {
+      changes: []
+    };
+  }
+
+  /**
    * Find TOON file in directory
    * @param dir - Directory to search
    * @returns Found file path or null

@@ -6,8 +6,8 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { TOONParser, parseTOON, extractSymbols, getParser } from './parser';
-import type { TOONParseResult, ParsedSymbol } from './types';
+import { TOONParser, parseTOON, extractSymbols, getParser, type TOONParseResult, type ParsedSymbol } from './parser';
+import type { TOONDocument } from './types';
 import {
   VALID_MINIMAL_TOON,
   VALID_COMPLETE_TOON,

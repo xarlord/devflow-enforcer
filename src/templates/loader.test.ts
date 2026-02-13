@@ -11,14 +11,24 @@ import { promises as fs } from 'fs';
 import type { LoadedTemplate, TemplateMetadata } from './types';
 
 // Mock fs module
+const mockReadFile = vi.fn();
+const mockWriteFile = vi.fn();
+const mockStat = vi.fn();
+const mockAccess = vi.fn();
+const mockReaddir = vi.fn();
+const mockStatSync = vi.fn();
+const mockExistsSync = vi.fn();
+
 vi.mock('fs', () => ({
   promises: {
-    readFile: vi.fn(),
-    writeFile: vi.fn(),
-    stat: vi.fn(),
-    access: vi.fn(),
-    readdir: vi.fn(),
+    readFile: (...args: any[]) => mockReadFile(...args),
+    writeFile: (...args: any[]) => mockWriteFile(...args),
+    stat: (...args: any[]) => mockStat(...args),
+    access: (...args: any[]) => mockAccess(...args),
+    readdir: (...args: any[]) => mockReaddir(...args),
   },
+  statSync: (...args: any[]) => mockStatSync(...args),
+  existsSync: (...args: any[]) => mockExistsSync(...args),
 }));
 
 describe('TemplateLoader', () => {
@@ -26,7 +36,23 @@ describe('TemplateLoader', () => {
 
   beforeEach(() => {
     loader = new TemplateLoader();
+    // Reset all mocks
+    mockReadFile.mockReset();
+    mockWriteFile.mockReset();
+    mockStat.mockReset();
+    mockAccess.mockReset();
+    mockReaddir.mockReset();
+    mockStatSync.mockReset();
+    mockExistsSync.mockReset();
     vi.clearAllMocks();
+
+    // Set up default statSync mock
+    mockStatSync.mockReturnValue({
+      size: 1000,
+      mtime: new Date(),
+      isFile: () => true,
+      isDirectory: () => false,
+    });
   });
 
   afterEach(() => {
@@ -61,8 +87,8 @@ describe('TemplateLoader', () => {
 - created_at: "2026-01-01T00:00:00Z"
 `;
 
-      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-      vi.mocked(fs.stat).mockResolvedValue({
+      mockReadFile.mockResolvedValue(mockContent);
+      mockStat.mockResolvedValue({
         size: mockContent.length,
         mtime: new Date(),
       } as any);
@@ -87,8 +113,8 @@ describe('TemplateLoader', () => {
 - created_at: "2026-01-01T00:00:00Z"
 `;
 
-      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-      vi.mocked(fs.stat).mockResolvedValue({
+      mockReadFile.mockResolvedValue(mockContent);
+      mockStat.mockResolvedValue({
         size: mockContent.length,
         mtime: new Date(),
       } as any);
@@ -111,8 +137,8 @@ describe('TemplateLoader', () => {
 - created_at: "2026-01-01T00:00:00Z"
 `;
 
-      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-      vi.mocked(fs.stat).mockResolvedValue({
+      mockReadFile.mockResolvedValue(mockContent);
+      mockStat.mockResolvedValue({
         size: mockContent.length,
         mtime: new Date(),
       } as any);
@@ -135,8 +161,8 @@ describe('TemplateLoader', () => {
 - created_at: "2026-01-01T00:00:00Z"
 `;
 
-      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-      vi.mocked(fs.stat).mockResolvedValue({
+      mockReadFile.mockResolvedValue(mockContent);
+      mockStat.mockResolvedValue({
         size: mockContent.length,
         mtime: new Date(),
       } as any);
@@ -158,8 +184,8 @@ describe('TemplateLoader', () => {
 - created_at: "2026-01-01T00:00:00Z"
 `;
 
-      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-      vi.mocked(fs.stat).mockResolvedValue({
+      mockReadFile.mockResolvedValue(mockContent);
+      mockStat.mockResolvedValue({
         size: mockContent.length,
         mtime: new Date(),
       } as any);
@@ -184,8 +210,8 @@ describe('TemplateLoader', () => {
 - created_at: "2026-01-01T00:00:00Z"
 `;
 
-      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-      vi.mocked(fs.stat)
+      mockReadFile.mockResolvedValue(mockContent);
+      mockStat
         .mockResolvedValueOnce({
           size: mockContent.length,
           mtime: new Date('2026-01-01'),
@@ -204,7 +230,7 @@ describe('TemplateLoader', () => {
     });
 
     it('should throw error for non-existent template', async () => {
-      vi.mocked(fs.readFile).mockRejectedValue(new Error('File not found'));
+      mockReadFile.mockRejectedValue(new Error('File not found'));
 
       await expect(
         loader.loadTemplate('non-existent', 'toon')
@@ -223,8 +249,8 @@ describe('TemplateLoader', () => {
 - created_at: "2026-01-01T00:00:00Z"
 `;
 
-      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-      vi.mocked(fs.stat).mockResolvedValue({
+      mockReadFile.mockResolvedValue(mockContent);
+      mockStat.mockResolvedValue({
         size: mockContent.length,
         mtime: new Date(),
       } as any);
@@ -240,7 +266,7 @@ describe('TemplateLoader', () => {
 
   describe('listTemplates', () => {
     it('should list available templates', async () => {
-      vi.mocked(fs.readdir).mockResolvedValue([
+      mockReaddir.mockResolvedValue([
         'requirements.toon.md',
         'architecture.toon.md',
         'detailed-design.toon.md',
@@ -256,7 +282,7 @@ describe('TemplateLoader', () => {
     });
 
     it('should filter by format', async () => {
-      vi.mocked(fs.readdir).mockResolvedValue([
+      mockReaddir.mockResolvedValue([
         'requirements.toon.md',
         'requirements.md',
         'architecture.toon.md',
@@ -270,7 +296,7 @@ describe('TemplateLoader', () => {
 
   describe('hasTemplate', () => {
     it('should return true for existing template', async () => {
-      vi.mocked(fs.access).mockResolvedValue(undefined);
+      mockAccess.mockResolvedValue(undefined);
 
       const exists = await loader.hasTemplate('requirements');
 
@@ -278,7 +304,7 @@ describe('TemplateLoader', () => {
     });
 
     it('should return false for non-existent template', async () => {
-      vi.mocked(fs.access).mockRejectedValue(new Error('File not found'));
+      mockAccess.mockRejectedValue(new Error('File not found'));
 
       const exists = await loader.hasTemplate('non-existent');
 
@@ -299,8 +325,8 @@ describe('TemplateLoader', () => {
 - created_at: "2026-01-01T00:00:00Z"
 `;
 
-      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-      vi.mocked(fs.stat).mockResolvedValue({
+      mockReadFile.mockResolvedValue(mockContent);
+      mockStat.mockResolvedValue({
         size: mockContent.length,
         mtime: new Date(),
       } as any);
@@ -326,8 +352,8 @@ describe('TemplateLoader', () => {
 - created_at: "2026-01-01T00:00:00Z"
 `;
 
-      vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-      vi.mocked(fs.stat).mockResolvedValue({
+      mockReadFile.mockResolvedValue(mockContent);
+      mockStat.mockResolvedValue({
         size: mockContent.length,
         mtime: new Date(),
       } as any);
@@ -356,8 +382,8 @@ describe('loadTemplate', () => {
 - created_at: "2026-01-01T00:00:00Z"
 `;
 
-    vi.mocked(fs.readFile).mockResolvedValue(mockContent);
-    vi.mocked(fs.stat).mockResolvedValue({
+    mockReadFile.mockResolvedValue(mockContent);
+    mockStat.mockResolvedValue({
       size: mockContent.length,
       mtime: new Date(),
     } as any);
@@ -370,7 +396,7 @@ describe('loadTemplate', () => {
 
 describe('listTemplates', () => {
   it('should list templates using default loader', async () => {
-    vi.mocked(fs.readdir).mockResolvedValue([
+    mockReaddir.mockResolvedValue([
       'requirements.toon.md',
       'architecture.toon.md',
     ]);

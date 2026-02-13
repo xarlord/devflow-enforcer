@@ -264,14 +264,14 @@ export class TOONParser {
       if (inOverview && line.startsWith('-')) {
         const match = this.matchBulletItem(line);
         if (match) {
-          const key = match.key.toLowerCase().replace(/-/g, '_');
+          const parsedValue = this.parseValue(match.value);
 
-          if (match.key === 'name') header.name = match.value;
-          else if (match.key === 'description') header.description = match.value;
-          else if (match.key === 'version') header.version = match.value;
-          else if (match.key === 'status') header.status = match.value;
-          else if (match.key === 'created_at') header.created_at = match.value;
-          else if (match.key === 'updated_at') header.updated_at = match.value;
+          if (match.key === 'name') header.name = parsedValue;
+          else if (match.key === 'description') header.description = parsedValue;
+          else if (match.key === 'version') header.version = parsedValue;
+          else if (match.key === 'status') header.status = parsedValue;
+          else if (match.key === 'created_at') header.created_at = parsedValue;
+          else if (match.key === 'updated_at') header.updated_at = parsedValue;
           else if (match.key === 'tags') header.tags = this.parseArrayValue(match.value);
         }
       }
@@ -415,6 +415,12 @@ export class TOONParser {
     // Handle @ref references
     if (value.startsWith('@ref:')) {
       return value; // Keep as string for resolver
+    }
+
+    // Handle quoted strings
+    if ((value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"))) {
+      return value.slice(1, -1);
     }
 
     // Handle arrays

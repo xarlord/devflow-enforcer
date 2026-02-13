@@ -12,7 +12,7 @@ import {
   toonFeatureSchema,
   toonUserStorySchema,
   toonAcceptanceCriteriaSchema
-} from '../schemas';
+} from './schemas';
 
 /**
  * Document types for validation

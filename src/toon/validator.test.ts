@@ -6,8 +6,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { TOONValidator, validateDocument, validateType, getValidator } from './validator';
-import type { TOONDocument, ValidationResult } from './types';
+import { TOONValidator, validateDocument, validateType, getValidator, type ValidationResult } from './validator';
+import type { TOONDocument } from './types';
 import { VALID_MINIMAL_TOON, VALID_COMPLETE_TOON } from '../../test/fixtures';
 
 describe('TOONValidator', () => {

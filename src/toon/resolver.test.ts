@@ -6,10 +6,9 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { RefResolver, resolveRefs, detectCycles, getResolver } from './resolver';
-import type { ParsedSymbol, CircularChain, ResolvedDocument } from './types';
+import { RefResolver, resolveRefs, detectCycles, getResolver, type CircularChain, type ResolvedDocument } from './resolver';
+import type { ParsedSymbol } from './parser';
 import { TOON_WITH_REFS, TOON_WITH_CIRCULAR_REFS } from '../../test/fixtures';
-import { TOONParser } from './parser';
 
 describe('RefResolver', () => {
   let resolver: RefResolver;

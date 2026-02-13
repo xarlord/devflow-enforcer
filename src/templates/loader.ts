@@ -5,7 +5,7 @@
  * @version 1.0.0
  */
 
-import { promises as fs } from 'fs';
+import { promises as fs, statSync } from 'fs';
 import * as path from 'path';
 import { parseTOON } from '../toon';
 
@@ -319,7 +319,7 @@ export class TemplateLoader {
 
     // Verify file hasn't changed
     try {
-      const stats = fs.statSync(entry.path);
+      const stats = statSync(entry.path);
       if (stats.mtimeMs > entry.timestamp) {
         this.cache.delete(key);
         return null;
@@ -339,7 +339,7 @@ export class TemplateLoader {
    * @param filePath - Template file path
    */
   private addToCache(key: string, template: LoadedTemplate, filePath: string): void {
-    const stats = fs.statSync(filePath);
+    const stats = statSync(filePath);
     this.cache.set(key, {
       template,
       timestamp: Date.now(),
@@ -425,4 +425,12 @@ export async function loadTemplate(
   preferredFormat?: 'toon' | 'markdown'
 ): Promise<LoadedTemplate> {
   return getLoader().loadTemplate(name, preferredFormat);
+}
+
+/**
+ * List templates using default loader
+ * @returns Array of template info
+ */
+export async function listTemplates(): Promise<TemplateInfo[]> {
+  return getLoader().listTemplates();
 }
