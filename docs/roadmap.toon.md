@@ -229,13 +229,29 @@
   description: "Release schedule from Q1 2026 through Q2 2027"
   releases: @ref:releases
 
-## Release Object
+---
 
-- name: "v2.1.0"
-  date: "2026-03-15"
-  status: "planned"
-  features: @ref:phase1_features
-  dependencies: []
+---
+
+## Timeline Object
+
+**Symbol:** @timeline:roadmap
+
+**Symbol:** @release:v2.1.0
+
+**name:** "v2.1.0"
+**description:** "Initial DevFlow Enforcer release with TOON integration"
+
+**date:** "2026-03-15"
+**status:** "planned"
+
+**features:** @ref:phase1_features
+
+**dependencies:** []
+
+---
+
+## Phase 4 Success Criteria
 
 - name: "v2.2.0"
   date: "2026-06-15"
