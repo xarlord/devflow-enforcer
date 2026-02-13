@@ -42,6 +42,10 @@
 
 ## Recent Activity
 
+- 2026-02-13: Fixed syntax errors in resolver.ts (line 224 - missing // prefix)
+- 2026-02-13: Fixed parser.test.ts - updated imports and assertions to match implementation
+- 2026-02-13: Added fatal property to TOONParseResult return value
+- 2026-02-13: Tests passing - 92 tests (4 skipped) across all components
 - 2026-02-13: PR #2 created - feat: TOON Integration Test Feature
 - 2026-02-13: Fixes pushed to remote (converter.ts: md to toon support)
 - 2026-02-13: Converter fixed - now supports md to toon conversion (was throwing "Unsupported source format: md")
