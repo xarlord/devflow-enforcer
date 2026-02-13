@@ -1,7 +1,7 @@
 # DevFlow Enforcer
 
 **Plugin Type:** Claude Code Plugin
-**Version:** 2.0 (Context Window Optimized)
+**Version:** 2.0.0
 
 ## What is DevFlow Enforcer?
 
