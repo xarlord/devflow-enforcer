@@ -33,18 +33,26 @@
 | Requirements Verifiability | 11/11 (100%) | 100% | ✅ PASSED |
 | User Stories | 11/11 (100%) | 100% | ✅ PASSED |
 | Acceptance Criteria | 11/11 BDD format | 100% BDD | ✅ PASSED |
-| Unit Test Coverage | N/A | 95% | N/A |
-| Unit Test Pass Rate | N/A | 100% | N/A |
+| Unit Test Pass Rate | 88/92 (95.7%) | 100% | ⚠️ IN PROGRESS |
+| Core Component Tests | 76/76 (100%) | 100% | ✅ PASSED |
 | Linting Errors | N/A | 0 | N/A |
 | Critical Security Issues | N/A | 0 | N/A |
 | High Security Issues | N/A | 0 | N/A |
 
 ## Recent Activity
 
-- 2026-02-13: Test Infrastructure UPDATE - 15/31 tests passing (48%)
+- 2026-02-13: Test Infrastructure UPDATE - 88/92 tests passing (95.7%)
+- 2026-02-13: Resolver Tests: 19/19 passing (100%) - Fixed @ref format support, cycle detection, symbol extraction
+- 2026-02-13: Loader Tests: 19/19 passing (100%) - Fixed format filter, cache invalidation with fileMtimeMs
+- 2026-02-13: Findings CLOSED - TOON-F-004 (@ref Target Definitions) and TOON-F-008 (Symbol Anchor Syntax)
+- 2026-02-13: Added all symbol anchors to roadmap.toon.md (phases, timeline, phase1-4, phase1-4_features, phase1-4_success, releases)
+- 2026-02-13: Documented symbol anchor syntax: `## Symbol: <symbol_name>` with @ref resolution
+- 2026-02-13: Fixed resolver to support both @ref:name and @ref(name) formats
+- 2026-02-13: Fixed resolver extractAllSymbols to extract object keys as potential symbols
+- 2026-02-13: Fixed loader cache invalidation to use stored fileMtimeMs instead of cache timestamp
 - 2026-02-13: Fixed import paths (validator: ./schemas, parser/resolver types)
 - 2026-02-13: Fixed fs mock setup with statSync mocking
-- 2026-02-2026-02-13: Added guideTemplate method to DevFlowCommands class
+- 2026-02-13: Added guideTemplate method to DevFlowCommands class
 - 2026-02-13: Added quote string handling in TOON parser parseValue method
 - 2026-02-13: Fixed token-counter tiktoken import (using get_encoding)
 - 2026-02-13: Fixed async/await issues in commands/index.ts
@@ -152,11 +160,11 @@
 | TOON-F-001 | Low | Technology Stack Specification Enhanced | ✅ Closed |
 | TOON-F-002 | Low | Constraints Clarified | ✅ Closed |
 | TOON-F-003 | Low | Performance Metrics Enhanced | ✅ Closed |
-| TOON-F-004 | Medium | Missing @ref Target Definitions | ⚠️ Open |
+| TOON-F-004 | Medium | Missing @ref Target Definitions | ✅ Closed | 2026-02-13 |
 | TOON-F-005 | Medium | TypeScript Schema Not Implemented | ✅ Closed (Phase 3) |
 | TOON-F-006 | Low | Test Cases Not Defined | ✅ Closed (Phase 5) |
 | TOON-F-007 | Low | TypeScript Schema Implementation | ✅ Closed (Phase 3) |
-| TOON-F-008 | Medium | @ref Symbol Anchor Syntax Design | ⚠️ Open (Implementation) |
+| TOON-F-008 | Medium | @ref Symbol Anchor Syntax Design | ✅ Closed (Fixed) |
 | TOON-F-009 | Low | TokenCounter Using Approximation Instead of tiktoken | ✅ Closed (Fixed) |
 | TOON-F-010 | Medium | Missing Zod Schemas Directory | ✅ Closed (Fixed) |
 | TOON-F-011 | Low | Template Wizard Complexity | ✅ Closed (Fixed) |

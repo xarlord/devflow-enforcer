@@ -36,9 +36,11 @@ export interface CircularChain {
  */
 export interface ResolvedDocument {
   document: any;
+  resolved: boolean;
   resolvedRefs: Map<string, ResolvedReference>;
   unresolvedRefs: string[];
   cycles: CircularChain[];
+  resolvedPaths?: string[];
 }
 
 /**
@@ -115,22 +117,28 @@ export class RefResolver {
     this.resolveReferences(document, symbolTable, resolvedRefs, unresolvedRefs);
 
     // Detect cycles
-    const cycles = this.detectCycles(document);
+    const cycles = this.detectCycles(document, symbols);
+
+    // Build resolved paths
+    const resolvedPaths = Array.from(resolvedRefs.keys());
 
     return {
       document,
+      resolved: unresolvedRefs.length === 0,
       resolvedRefs,
       unresolvedRefs,
-      cycles
+      cycles,
+      resolvedPaths
     };
   }
 
   /**
    * Detect circular reference chains
    * @param document - Document with references
+   * @param symbols - Optional symbols Map for finding symbol content
    * @returns List of circular chains found
    */
-  detectCycles(document: any): CircularChain[] {
+  detectCycles(document: any, symbols?: Map<string, ParsedSymbol>): CircularChain[] {
     const visited = new Set<string>();
     const visiting = new Set<string>();
     const cycles: CircularChain[] = [];
@@ -164,7 +172,7 @@ export class RefResolver {
       path.push(symbol);
 
       // Visit references
-      const refs = this.getReferences(symbol, document);
+      const refs = this.getReferences(symbol, document, symbols);
       for (const ref of refs) {
         visit(ref, depth + 1);
       }
@@ -175,7 +183,14 @@ export class RefResolver {
     };
 
     // Start DFS from each symbol
-    const allSymbols = this.extractAllSymbols(document);
+    // Use symbols Map keys if available, otherwise extract from document
+    let allSymbols: string[] = [];
+    if (symbols && symbols.size > 0) {
+      allSymbols = Array.from(symbols.keys());
+    } else {
+      allSymbols = this.extractAllSymbols(document);
+    }
+
     for (const symbol of allSymbols) {
       if (!visited.has(symbol)) {
         visit(symbol);
@@ -192,6 +207,61 @@ export class RefResolver {
    */
   buildSymbolTable(symbols: Map<string, ParsedSymbol>): SymbolTable {
     return new SymbolTableImpl(new Map(symbols));
+  }
+
+  /**
+   * Extract @ref references from text string
+   * @param text - Text to extract references from
+   * @returns Array of reference symbols (without @ref: prefix)
+   */
+  extractReferences(text: string): string[] {
+    if (!text || typeof text !== 'string') {
+      return [];
+    }
+
+    const refs: string[] = [];
+    // Match both @ref:name and @ref(name) formats
+    const regex = /@ref[:\(]([a-zA-Z0-9_-]+)\)?/g;
+    let match: RegExpExecArray | null;
+
+    while ((match = regex.exec(text)) !== null) {
+      refs.push(match[1]);
+    }
+
+    return refs;
+  }
+
+  /**
+   * Extract @ref references from object values
+   * @param obj - Object to extract references from
+   * @returns Array of reference symbols
+   */
+  extractObjectReferences(obj: any): string[] {
+    const refs = new Set<string>();
+
+    const extractFromValue = (value: any): void => {
+      if (!value) return;
+
+      if (typeof value === 'string' && (value.startsWith('@ref:') || value.startsWith('@ref('))) {
+        // Match both @ref:name and @ref(name) formats
+        const regex = /@ref[:\(]([a-zA-Z0-9_-]+)\)?/g;
+        let match: RegExpExecArray | null;
+        while ((match = regex.exec(value)) !== null) {
+          refs.add(match[1]);
+        }
+      } else if (Array.isArray(value)) {
+        for (const item of value) {
+          extractFromValue(item);
+        }
+      } else if (typeof value === 'object' && value !== null) {
+        for (const v of Object.values(value)) {
+          extractFromValue(v);
+        }
+      }
+    };
+
+    extractFromValue(obj);
+    return Array.from(refs);
   }
 
   /**
@@ -249,26 +319,35 @@ export class RefResolver {
       for (const [key, value] of Object.entries(obj)) {
         const fieldPath = path ? `${path}.${key}` : key;
 
-        if (typeof value === 'string' && value.startsWith('@ref:')) {
-          const symbol = value.substring(5); // Remove '@ref:'
-          const lineNumber = this.findLineNumber(document, symbol) || 0;
+        if (typeof value === 'string' && (value.startsWith('@ref:') || value.startsWith('@ref('))) {
+          // Match both @ref:name and @ref(name) formats
+          const regex = /@ref[:\(]([a-zA-Z0-9_-]+)\)?/;
+          const match = value.match(regex);
+          if (match) {
+            const symbol = match[1];
+            const lineNumber = this.findLineNumber(document, symbol) || 0;
 
-          refs.push({
-            refName: key, // The field name (e.g., "phases")
-            symbol: symbol, // The symbol being referenced
-            path: fieldPath,
-            line: lineNumber
-          });
+            refs.push({
+              refName: key, // The field name (e.g., "phases")
+              symbol: symbol, // The symbol being referenced
+              path: fieldPath,
+              line: lineNumber
+            });
+          }
         } else if (Array.isArray(value)) {
           for (const item of value) {
-            if (typeof item === 'string' && item.startsWith('@ref:')) {
-              const symbol = item.substring(5);
-              refs.push({
-                refName: key,
-                symbol: symbol,
-                path: fieldPath,
-                line: 0 // Can't determine exact line for arrays
-              });
+            if (typeof item === 'string' && (item.startsWith('@ref:') || item.startsWith('@ref('))) {
+              const regex = /@ref[:\(]([a-zA-Z0-9_-]+)\)?/;
+              const match = item.match(regex);
+              if (match) {
+                const symbol = match[1];
+                refs.push({
+                  refName: key,
+                  symbol: symbol,
+                  path: fieldPath,
+                  line: 0 // Can't determine exact line for arrays
+                });
+              }
             }
           }
         } else if (typeof value === 'object' && value !== null) {
@@ -285,9 +364,10 @@ export class RefResolver {
    * Get references for a specific symbol
    * @param symbol - Symbol name
    * @param document - Document to search
+   * @param symbols - Optional symbols Map for finding symbol content
    * @returns Array of referenced symbols
    */
-  private getReferences(symbol: string, document: any): string[] {
+  private getReferences(symbol: string, document: any, symbols?: Map<string, ParsedSymbol>): string[] {
     const refs: string[] = [];
 
     // Find where this symbol is defined and extract its @refs
@@ -295,11 +375,12 @@ export class RefResolver {
       if (!value) return;
 
       if (typeof value === 'string') {
-        if (value.startsWith('@ref:')) {
-          const refSymbol = value.substring(5);
-          if (refSymbol === symbol) {
-            // This symbol references itself directly
-          } else {
+        // Match both @ref:name and @ref(name) formats anywhere in the string
+        const regex = /@ref[:\(]([a-zA-Z0-9_-]+)\)?/g;
+        let match: RegExpExecArray | null;
+        while ((match = regex.exec(value)) !== null) {
+          const refSymbol = match[1];
+          if (refSymbol !== symbol) {
             refs.push(refSymbol);
           }
         }
@@ -314,7 +395,16 @@ export class RefResolver {
       }
     };
 
-    // Look for symbol content in document
+    // First try to find symbol content from symbols Map
+    if (symbols) {
+      const parsedSymbol = symbols.get(symbol);
+      if (parsedSymbol && parsedSymbol.content) {
+        extractRefsFromValue(parsedSymbol.content);
+        return refs;
+      }
+    }
+
+    // Otherwise look for symbol content in document
     const findSymbolContent = (obj: any, depth = 0): void => {
       if (depth > 10 || !obj) return; // Limit search depth
 
@@ -339,18 +429,31 @@ export class RefResolver {
   private extractAllSymbols(document: any): string[] {
     const symbols = new Set<string>();
 
-    const extractSymbolsFromValue = (value: any): void => {
+    const extractSymbolsFromValue = (value: any, key?: string): void => {
       if (!value) return;
 
-      if (typeof value === 'string' && value.startsWith('@ref:')) {
-        symbols.add(value.substring(5));
+      if (typeof value === 'string') {
+        // Extract symbols from @ref references (both formats)
+        const regex = /@ref[:\(]([a-zA-Z0-9_-]+)\)?/g;
+        let match: RegExpExecArray | null;
+        while ((match = regex.exec(value)) !== null) {
+          symbols.add(match[1]);
+        }
+        // Also extract from the old @ref: format
+        if (value.startsWith('@ref:')) {
+          symbols.add(value.substring(5));
+        }
       } else if (Array.isArray(value)) {
         for (const item of value) {
           extractSymbolsFromValue(item);
         }
-      } else if (typeof value === 'object') {
-        for (const v of Object.values(value)) {
-          extractSymbolsFromValue(v);
+      } else if (typeof value === 'object' && value !== null) {
+        for (const [k, v] of Object.entries(value)) {
+          // Add object keys as potential symbols (except common metadata fields)
+          if (k !== 'name' && k !== 'type' && k !== 'description' && k !== 'version') {
+            symbols.add(k);
+          }
+          extractSymbolsFromValue(v, k);
         }
       }
     };
@@ -431,4 +534,13 @@ export function resolveRefs(
   symbols: Map<string, ParsedSymbol>
 ): ResolvedDocument {
   return getResolver().resolve(document, symbols);
+}
+
+/**
+ * Detect circular references in document using default resolver
+ * @param document - Document to check for cycles
+ * @returns Array of circular chains found
+ */
+export function detectCycles(document: any, symbols?: Map<string, ParsedSymbol>): CircularChain[] {
+  return getResolver().detectCycles(document, symbols);
 }

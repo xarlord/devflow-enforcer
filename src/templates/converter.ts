@@ -144,6 +144,14 @@ export class FormatConverter {
    */
   convert(content: string, from: 'md' | 'toon', to: 'md' | 'toon'): ConversionResult {
     if (from === to) {
+      // Same format - return as-is with content length as token count
+      return {
+        content,
+        format: to,
+        tokens: content.length,
+        warnings: []
+      };
+    } else if (from === 'md') {
       return this.mdToToon(content);
     } else if (from === 'toon') {
       return this.toonToMd(content);

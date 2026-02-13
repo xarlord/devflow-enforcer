@@ -57,6 +57,7 @@ interface CacheEntry {
   template: LoadedTemplate;
   timestamp: number;
   path: string;
+  fileMtimeMs: number; // Store file modification time for cache invalidation
 }
 
 /**
@@ -146,9 +147,10 @@ export class TemplateLoader {
 
   /**
    * List all available templates
+   * @param format - Optional format filter ('toon' or 'markdown')
    * @returns List of template names and formats
    */
-  async listTemplates(): Promise<TemplateInfo[]> {
+  async listTemplates(format?: 'toon' | 'markdown'): Promise<TemplateInfo[]> {
     const templatesDir = this.options.templatesDir;
 
     try {
@@ -163,13 +165,17 @@ export class TemplateLoader {
     for (const entry of entries) {
       if (!entry.isFile()) continue;
 
+      const entryFormat = entry.name.endsWith('.toon.md') ? 'toon' : 'markdown';
       const basename = path.basename(entry.name, entry.name.endsWith('.toon.md') ? '.toon.md' : '.md');
       const name = basename.replace(/\.(toon\.)?md$/, '');
+
+      // Skip if format filter is specified and doesn't match
+      if (format && entryFormat !== format) continue;
 
       if (!templateMap.has(name)) {
         templateMap.set(name, {
           name,
-          formats: [],
+          formats: [entryFormat],
           metadata: {
             name,
             lastModified: entry.mtime?.toISOString() || new Date().toISOString(),
@@ -177,12 +183,11 @@ export class TemplateLoader {
             tokens: 0
           }
         });
-      }
-
-      const format = entry.name.endsWith('.toon.md') ? 'toon' : 'markdown';
-      const info = templateMap.get(name)!;
-      if (!info.formats.includes(format)) {
-        info.formats.push(format);
+      } else {
+        const info = templateMap.get(name)!;
+        if (!info.formats.includes(entryFormat)) {
+          info.formats.push(entryFormat);
+        }
       }
     }
 
@@ -317,10 +322,11 @@ export class TemplateLoader {
       return null;
     }
 
-    // Verify file hasn't changed
+    // Verify file hasn't changed by comparing mtime
     try {
       const stats = statSync(entry.path);
-      if (stats.mtimeMs > entry.timestamp) {
+      if (stats.mtimeMs > entry.fileMtimeMs) {
+        // File has been modified since caching
         this.cache.delete(key);
         return null;
       }
@@ -343,7 +349,8 @@ export class TemplateLoader {
     this.cache.set(key, {
       template,
       timestamp: Date.now(),
-      path: filePath
+      path: filePath,
+      fileMtimeMs: stats.mtimeMs
     });
 
     // Enforce cache size limit (approximately 100MB)

@@ -6,6 +6,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
+import { TOONParser } from './parser';
 import { RefResolver, resolveRefs, detectCycles, getResolver, type CircularChain, type ResolvedDocument } from './resolver';
 import type { ParsedSymbol } from './parser';
 import { TOON_WITH_REFS, TOON_WITH_CIRCULAR_REFS } from '../../test/fixtures';
@@ -40,17 +41,17 @@ describe('RefResolver', () => {
 
       const symbols = new Map<string, ParsedSymbol>([
         ['feature-a', {
-          name: 'feature-a',
+          symbol: 'feature-a',
+          line: 10,
           type: 'feature',
-          content: '- name: "Feature A"',
         }],
       ]);
 
       const result = resolver.resolve(document, symbols);
 
-      expect(result.resolved).toBe(true);
       expect(result.document).toBeDefined();
-      expect(result.unresolved).toHaveLength(0);
+      expect(result.unresolvedRefs).toHaveLength(0);
+      expect(result.resolvedRefs.size).toBeGreaterThan(0);
     });
 
     it('should track unresolved references', () => {
@@ -63,9 +64,8 @@ describe('RefResolver', () => {
 
       const result = resolver.resolve(document, symbols);
 
-      expect(result.resolved).toBe(false);
-      expect(result.unresolved.length).toBeGreaterThan(0);
-      expect(result.unresolved[0].ref).toBe('missing-feature');
+      expect(result.unresolvedRefs.length).toBeGreaterThan(0);
+      expect(result.unresolvedRefs[0]).toBe('missing-feature');
     });
 
     it('should resolve multiple @ref references', () => {
@@ -77,21 +77,21 @@ describe('RefResolver', () => {
 
       const symbols = new Map<string, ParsedSymbol>([
         ['feature-a', {
-          name: 'feature-a',
+          symbol: 'feature-a',
+          line: 10,
           type: 'feature',
-          content: '- name: "Feature A"',
         }],
         ['feature-b', {
-          name: 'feature-b',
+          symbol: 'feature-b',
+          line: 20,
           type: 'feature',
-          content: '- name: "Feature B"',
         }],
       ]);
 
       const result = resolver.resolve(document, symbols);
 
-      expect(result.resolved).toBe(true);
-      expect(result.unresolved).toHaveLength(0);
+      expect(result.unresolvedRefs).toHaveLength(0);
+      expect(result.resolvedRefs.size).toBe(2);
     });
 
     it('should handle nested @ref references', () => {
@@ -140,11 +140,11 @@ describe('RefResolver', () => {
         }],
       ]);
 
-      const cycles = resolver.detectCycles(document);
+      const cycles = resolver.detectCycles(document, symbols);
 
       expect(cycles).toBeDefined();
       expect(cycles.length).toBeGreaterThan(0);
-      expect(cycles[0].length).toBeGreaterThan(1);
+      expect(cycles[0].symbols.length).toBeGreaterThan(1);
     });
 
     it('should detect three-way circular reference', () => {
@@ -171,7 +171,7 @@ describe('RefResolver', () => {
         }],
       ]);
 
-      const cycles = resolver.detectCycles(document);
+      const cycles = resolver.detectCycles(document, symbols);
 
       expect(cycles).toBeDefined();
       expect(cycles.length).toBeGreaterThan(0);
@@ -196,7 +196,7 @@ describe('RefResolver', () => {
         }],
       ]);
 
-      const cycles = resolver.detectCycles(document);
+      const cycles = resolver.detectCycles(document, symbols);
 
       expect(cycles).toBeDefined();
       expect(cycles.length).toBe(0);
@@ -221,7 +221,7 @@ describe('RefResolver', () => {
         }],
       ]);
 
-      const cycles = resolver.detectCycles(document);
+      const cycles = resolver.detectCycles(document, symbols);
 
       expect(cycles.length).toBeGreaterThan(0);
       expect(cycles[0]).toBeDefined();
@@ -315,15 +315,16 @@ describe('resolveRefs', () => {
 
     const symbols = new Map<string, ParsedSymbol>([
       ['feature-a', {
-        name: 'feature-a',
+        symbol: 'feature-a',
+        line: 10,
         type: 'feature',
-        content: '- name: "Feature A"',
       }],
     ]);
 
     const result = resolveRefs(document, symbols);
 
-    expect(result.resolved).toBe(true);
+    expect(result.unresolvedRefs).toHaveLength(0);
+    expect(result.resolvedRefs.size).toBeGreaterThan(0);
   });
 });
 
@@ -332,22 +333,15 @@ describe('detectCycles', () => {
     const document = {
       name: 'test',
       depends_on: '@ref(feature-a)',
+      'feature-a': {
+        depends_on: '@ref(feature-b)',
+      },
+      'feature-b': {
+        depends_on: '@ref(feature-a)',
+      },
     };
 
-    const symbols = new Map<string, ParsedSymbol>([
-      ['feature-a', {
-        name: 'feature-a',
-        type: 'feature',
-        content: '- depends_on: @ref(feature-b)',
-      }],
-      ['feature-b', {
-        name: 'feature-b',
-        type: 'feature',
-        content: '- depends_on: @ref(feature-a)',
-      }],
-    ]);
-
-    const cycles = detectCycles(document, symbols);
+    const cycles = detectCycles(document);
 
     expect(cycles.length).toBeGreaterThan(0);
   });

@@ -324,18 +324,27 @@ export class TOONValidator {
       for (const [key, value] of Object.entries(obj)) {
         const fieldPath = prefix ? `${prefix}.${key}` : key;
 
-        if (typeof value === 'string' && value.startsWith('@ref:')) {
-          refs.push({
-            symbol: value.substring(5), // Remove '@ref:' prefix
-            path: fieldPath
-          });
+        if (typeof value === 'string' && (value.startsWith('@ref:') || value.startsWith('@ref('))) {
+          // Match both @ref:name and @ref(name) formats
+          const regex = /@ref[:\(]([a-zA-Z0-9_-]+)\)?/;
+          const match = value.match(regex);
+          if (match) {
+            refs.push({
+              symbol: match[1], // Extract the symbol name
+              path: fieldPath
+            });
+          }
         } else if (Array.isArray(value)) {
           for (const item of value) {
-            if (typeof item === 'string' && item.startsWith('@ref:')) {
-              refs.push({
-                symbol: item.substring(5),
-                path: fieldPath
-              });
+            if (typeof item === 'string' && (item.startsWith('@ref:') || item.startsWith('@ref('))) {
+              const regex = /@ref[:\(]([a-zA-Z0-9_-]+)\)?/;
+              const match = item.match(regex);
+              if (match) {
+                refs.push({
+                  symbol: match[1],
+                  path: fieldPath
+                });
+              }
             }
           }
         } else if (typeof value === 'object' && value !== null) {
@@ -355,12 +364,12 @@ export class TOONValidator {
    */
   private mapZodErrorToErrorCode(err: z.ZodIssue): ErrorCode {
     switch (err.code) {
-      case z.ZodIssueCode.invalid_type:
+      case 'invalid_type':
         return ErrorCode.INVALID_TYPE;
-      case z.ZodIssueCode.invalid_enum:
+      case 'invalid_enum_value':
         return ErrorCode.INVALID_ENUM;
-      case z.ZodIssueCode.invalid_string:
-      case z.ZodIssueCode.invalid_date:
+      case 'invalid_string':
+      case 'invalid_date':
         return ErrorCode.INVALID_FORMAT;
       default:
         return ErrorCode.MISSING_REQUIRED_FIELD;
@@ -424,4 +433,14 @@ export function getValidator(): TOONValidator {
  */
 export function validateDocument(document: unknown): ValidationResult {
   return getValidator().validate(document);
+}
+
+/**
+ * Validate TOON document by type using default validator
+ * @param document - Document to validate
+ * @param type - Document type to validate against
+ * @returns Validation result
+ */
+export function validateType(document: unknown, type: string): ValidationResult {
+  return getValidator().validateType(document, type);
 }

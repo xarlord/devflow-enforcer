@@ -28,11 +28,10 @@ export const toonDocumentSchema = z.object({
     .datetime('Created date must be a valid ISO 8601 datetime'),
 
   updated_at: z.string()
-    .datetime('Updated date must be a valid ISO 8601 datetime'),
+    .datetime('Updated date must be a valid ISO 8601 datetime')
+    .optional(),
 
-  status: z.enum(['draft', 'active', 'deprecated', 'superseded'], {
-    errorMap: () => ({ message: 'Status must be one of: draft, active, deprecated, superseded' })
-  }),
+  status: z.enum(['draft', 'active', 'deprecated', 'superseded']),
 
   tags: z.array(z.string()
     .max(50, 'Tag must be less than 50 characters'))
@@ -47,7 +46,7 @@ export const toonDocumentSchema = z.object({
   timeline: z.string()
     .startsWith('@ref:', 'Timeline reference must start with @ref:')
     .optional()
-});
+}).passthrough(); // Allow additional fields like 'type'
 
 // Infer TypeScript type from schema
 export type ToonDocumentSchema = z.infer<typeof toonDocumentSchema>;

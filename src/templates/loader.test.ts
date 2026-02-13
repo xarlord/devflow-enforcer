@@ -31,6 +31,15 @@ vi.mock('fs', () => ({
   existsSync: (...args: any[]) => mockExistsSync(...args),
 }));
 
+// Helper function to create mock Dirent objects
+function createMockDirent(name: string, isFile: boolean = true) {
+  return {
+    name,
+    isFile: () => isFile,
+    isDirectory: () => !isFile,
+  };
+}
+
 describe('TemplateLoader', () => {
   let loader: TemplateLoader;
 
@@ -196,7 +205,7 @@ describe('TemplateLoader', () => {
       await loader.loadTemplate('test-cache', 'toon');
 
       // readFile should only be called once due to caching
-      expect(fs.readFile).toHaveBeenCalledTimes(1);
+      expect(mockReadFile).toHaveBeenCalledTimes(1);
     });
 
     it('should invalidate cache when file changes', async () => {
@@ -211,22 +220,48 @@ describe('TemplateLoader', () => {
 `;
 
       mockReadFile.mockResolvedValue(mockContent);
+
+      const baseTime = Date.now();
+      const firstMtime = baseTime - 2000; // File was modified 2 seconds ago
+      const secondMtime = baseTime - 500;  // File was modified 0.5 seconds ago (more recent)
+
+      // First load: getFromCache (no cache, no statSync), then addToCache (statSync 1st)
+      // Second load: getFromCache (cache exists, statSync 2nd check), then addToCache (statSync 3rd)
+      mockStatSync
+        .mockReturnValueOnce({
+          size: mockContent.length,
+          mtime: new Date(firstMtime),
+          mtimeMs: firstMtime,
+        } as any)
+        .mockReturnValueOnce({
+          size: mockContent.length,
+          mtime: new Date(secondMtime),
+          mtimeMs: secondMtime,
+        } as any)
+        .mockReturnValueOnce({
+          size: mockContent.length,
+          mtime: new Date(secondMtime),
+          mtimeMs: secondMtime,
+        } as any);
+
       mockStat
         .mockResolvedValueOnce({
           size: mockContent.length,
-          mtime: new Date('2026-01-01'),
+          mtime: new Date(firstMtime),
+          mtimeMs: firstMtime,
         } as any)
         .mockResolvedValueOnce({
           size: mockContent.length,
-          mtime: new Date('2026-01-02'), // Modified time
+          mtime: new Date(secondMtime),
+          mtimeMs: secondMtime,
         } as any);
 
-      // First load
+      // First load (cache miss) - creates cache entry with fileMtimeMs = firstMtime
       await loader.loadTemplate('test-invalidation', 'toon');
-      // Second load with modified file
+      // Second load - file has been modified (secondMtime > firstMtime), so cache should be invalidated
       await loader.loadTemplate('test-invalidation', 'toon');
 
-      expect(fs.readFile).toHaveBeenCalledTimes(2);
+      expect(mockReadFile).toHaveBeenCalledTimes(2);
     });
 
     it('should throw error for non-existent template', async () => {
@@ -260,17 +295,17 @@ describe('TemplateLoader', () => {
       expect(template.metadata).toBeDefined();
       expect(template.metadata.size).toBeGreaterThan(0);
       expect(template.metadata.tokens).toBeGreaterThan(0);
-      expect(template.metadata.format).toBe('toon');
+      expect(template.format).toBe('toon');
     });
   });
 
   describe('listTemplates', () => {
     it('should list available templates', async () => {
       mockReaddir.mockResolvedValue([
-        'requirements.toon.md',
-        'architecture.toon.md',
-        'detailed-design.toon.md',
-        'test-specification.toon.md',
+        createMockDirent('requirements.toon.md'),
+        createMockDirent('architecture.toon.md'),
+        createMockDirent('detailed-design.toon.md'),
+        createMockDirent('test-specification.toon.md'),
       ]);
 
       const templates = await loader.listTemplates();
@@ -283,20 +318,25 @@ describe('TemplateLoader', () => {
 
     it('should filter by format', async () => {
       mockReaddir.mockResolvedValue([
-        'requirements.toon.md',
-        'requirements.md',
-        'architecture.toon.md',
+        createMockDirent('requirements.toon.md'),
+        createMockDirent('requirements.md'),
+        createMockDirent('architecture.toon.md'),
       ]);
 
       const templates = await loader.listTemplates('toon');
 
-      expect(templates.every(t => t.format === 'toon')).toBe(true);
+      expect(templates.every(t => t.formats.includes('toon'))).toBe(true);
+      expect(templates.every(t => t.formats[0] === 'toon')).toBe(true);
     });
   });
 
   describe('hasTemplate', () => {
     it('should return true for existing template', async () => {
       mockAccess.mockResolvedValue(undefined);
+      mockReaddir.mockResolvedValue([
+        'requirements.toon.md',
+        'architecture.toon.md',
+      ]);
 
       const exists = await loader.hasTemplate('requirements');
 
@@ -304,7 +344,11 @@ describe('TemplateLoader', () => {
     });
 
     it('should return false for non-existent template', async () => {
-      mockAccess.mockRejectedValue(new Error('File not found'));
+      mockAccess.mockResolvedValue(undefined);
+      mockReaddir.mockResolvedValue([
+        'requirements.toon.md',
+        'architecture.toon.md',
+      ]);
 
       const exists = await loader.hasTemplate('non-existent');
 
@@ -365,7 +409,7 @@ describe('TemplateLoader', () => {
       // Load again - should read from disk
       await loader.loadTemplate('test-clear', 'toon');
 
-      expect(fs.readFile).toHaveBeenCalledTimes(2);
+      expect(mockReadFile).toHaveBeenCalledTimes(2);
     });
   });
 });
@@ -397,8 +441,8 @@ describe('loadTemplate', () => {
 describe('listTemplates', () => {
   it('should list templates using default loader', async () => {
     mockReaddir.mockResolvedValue([
-      'requirements.toon.md',
-      'architecture.toon.md',
+      createMockDirent('requirements.toon.md'),
+      createMockDirent('architecture.toon.md'),
     ]);
 
     const templates = await listTemplates();
