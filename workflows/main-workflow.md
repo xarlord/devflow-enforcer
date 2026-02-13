@@ -14,6 +14,7 @@ START
 ┌─────────────────────────────────────────────────────────────────────┐
 │ STAGE 1: Requirements Generation                                   │
 │ - Spawn: System/Software Architect                                 │
+│ - Template: requirements-template.md (MANDATORY)                   │
 │ - Creates findings                                                │
 │ - Output: Clear, concise, verifiable requirements                 │
 └─────────────────────────────────────────────────────────────────────┘
@@ -30,6 +31,7 @@ START
 ┌─────────────────────────────────────────────────────────────────────┐
 │ STAGE 3: High Level Architecture Design                            │
 │ - Spawn: System/Software Architect                                │
+│ - Template: architecture-template.md (MANDATORY)                   │
 │ - Creates findings                                                │
 │ - Output: Architecture design document                             │
 └─────────────────────────────────────────────────────────────────────┘
@@ -38,6 +40,7 @@ START
 ┌─────────────────────────────────────────────────────────────────────┐
 │ STAGE 4: Detailed Design                                           │
 │ - Spawn: System/Software Architect                                │
+│ - Template: detailed-design-template.md (MANDATORY)                │
 │ - Creates findings                                                │
 │ - Output: Detailed design (interactions, data models, specs)       │
 └─────────────────────────────────────────────────────────────────────┘
@@ -46,6 +49,7 @@ START
 ┌─────────────────────────────────────────────────────────────────────┐
 │ STAGE 5: Testing Specification                                     │
 │ - Spawn: Testing Agent                                            │
+│ - Template: test-specification-template.md (MANDATORY)             │
 │ - Creates findings                                                │
 │ - Output: Testing specification document                           │
 └─────────────────────────────────────────────────────────────────────┘
@@ -54,6 +58,7 @@ START
 ┌─────────────────────────────────────────────────────────────────────┐
 │ STAGE 6: Feature Creation & Allocation                            │
 │ - Spawn: System/Software Architect                                │
+│ - Template: feature-allocation-template.md (MANDATORY)             │
 │ - Creates findings                                                │
 │ - Output: Features with allocated requirements                    │
 └─────────────────────────────────────────────────────────────────────┘
@@ -173,6 +178,7 @@ START
 ┌─────────────────────────────────────────────────────────────────────┐
 │ RETROSPECTIVE                                                      │
 │ - Spawn: Retrospective Agent                                      │
+│ - Template: retrospective-report-template.md (MANDATORY)           │
 │ - Output: Lessons learned updated                                │
 └─────────────────────────────────────────────────────────────────────┘
   │
@@ -196,6 +202,26 @@ All agents must check lessons-learned before starting work (Stage 7c).
 
 ### 5. Context Management
 When context window < 5%, save state to files and reconstruct.
+
+### 6. Template Enforcement (NEW)
+**All documentation MUST use the provided templates.**
+
+| Stage | Template | Required Output | Verification |
+|-------|----------|-----------------|--------------|
+| 1 - Requirements Generation | `requirements-template.md` | requirements.md | Document completeness checklist |
+| 2 - Validation | N/A | findings.md (updated) | QA Agent validation |
+| 3 - Architecture Design | `architecture-template.md` | architecture.md | All sections complete |
+| 4 - Detailed Design | `detailed-design-template.md` | detailed-design.md | All sections complete |
+| 5 - Testing Specification | `test-specification-template.md` | test-specification.md | Quality gates defined |
+| 6 - Feature Allocation | `feature-allocation-template.md` | feature-allocation.md | All requirements allocated |
+| Retrospective | `retrospective-report-template.md` | retrospective-report.md | Lessons documented |
+
+**Template Usage Rules:**
+- Agents MUST load the appropriate template before starting work
+- All template sections MUST be completed (marked with ✅)
+- Template checklists MUST be verified before proceeding
+- Documents MUST follow the template structure
+- Any deviation from template MUST be documented as a finding
 
 ## Quality Metrics Summary
 
