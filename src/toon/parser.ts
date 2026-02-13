@@ -165,7 +165,8 @@ export class TOONParser {
         parsedAt: new Date().toISOString()
       },
       errors,
-      warnings
+      warnings,
+      fatal: false
     };
   }
 
