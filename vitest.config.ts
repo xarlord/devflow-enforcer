@@ -46,4 +46,8 @@ export default defineConfig({
       '@utils': resolve(__dirname, './src/utils'),
     },
   },
+  optimizeDeps: {
+    // Disable Vite optimize deps for better ESM compatibility
+    disabled: 'build',
+  },
 });

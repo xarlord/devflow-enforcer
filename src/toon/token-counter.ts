@@ -5,19 +5,17 @@
  * @version 1.0.0
  */
 
-import { encoding_for_model, Tiktoken } from 'tiktoken';
+import { get_encoding, Tiktoken } from 'tiktoken';
 
 /**
  * Token comparison result
  */
 export interface TokenComparison {
-  toon: { tokens: number; chars: number };
-  json: { tokens: number; chars: number };
-  markdown: { tokens: number; chars: number };
-  savings: {
-    vsJson: { tokens: number; percentage: number };
-    vsMarkdown: { tokens: number; percentage: number };
-  };
+  toonTokens: number;
+  jsonTokens: number;
+  markdownTokens: number;
+  savings: number;
+  savingsPercent: number;
 }
 
 /**
@@ -37,7 +35,7 @@ export class TokenCounter {
 
   constructor(options?: TokenCounterOptions) {
     // Initialize tiktoken with cl100k_base encoding (GPT-4)
-    this.encoding = encoding_for_model(options?.encoding || 'cl100k_base');
+    this.encoding = get_encoding(options?.encoding || 'cl100k_base');
   }
 
   /**
@@ -75,26 +73,18 @@ export class TokenCounter {
     const vsMarkdownTokens = markdownTokens - toonTokens;
 
     return {
-      toon: { tokens: toonTokens, chars: toon.length },
-      json: { tokens: jsonTokens, chars: json.length },
-      markdown: { tokens: markdownTokens, chars: markdown.length },
-      savings: {
-        vsJson: {
-          tokens: vsJsonTokens,
-          percentage: jsonTokens > 0 ? (vsJsonTokens / jsonTokens) * 100 : 0
-        },
-        vsMarkdown: {
-          tokens: vsMarkdownTokens,
-          percentage: markdownTokens > 0 ? (vsMarkdownTokens / markdownTokens) * 100 : 0
-        }
-      }
+      toonTokens,
+      jsonTokens,
+      markdownTokens,
+      savings: vsJsonTokens,
+      savingsPercent: jsonTokens > 0 ? (vsJsonTokens / jsonTokens) * 100 : 0
     };
   }
 
   /**
    * Free encoding resources
    */
-  dispose(): void {
+  free(): void {
     this.encoding.free();
   }
 }
@@ -122,4 +112,15 @@ export function getTokenCounter(): TokenCounter {
  */
 export function countTokens(content: string): number {
   return getTokenCounter().countTokens(content);
+}
+
+/**
+ * Compare token counts between formats
+ * @param toon - TOON format content
+ * @param json - JSON format content
+ * @param markdown - Markdown format content
+ * @returns Token comparison result
+ */
+export function compare(toon: string, json: string, markdown: string): TokenComparison {
+  return getTokenCounter().compare(toon, json, markdown);
 }

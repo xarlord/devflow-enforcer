@@ -128,7 +128,7 @@ export class DevFlowCommands {
       console.log(`\n🔍 Validating TOON document...\n`);
 
       const { validateDocument } = await import('../toon');
-      const fileName = options?.file || this.findTOONFile('.');
+      const fileName = options?.file || await this.findTOONFile('.');
 
       if (!fileName) {
         return {
@@ -200,7 +200,7 @@ export class DevFlowCommands {
 
       const { convertFile } = await import('../templates');
 
-      const input = options?.input || this.findTOONFile('.');
+      const input = options?.input || await this.findTOONFile('.');
       const format = options?.format || 'markdown';
       const output = options?.output || this.generateOutputPath(input, format);
 
@@ -342,15 +342,14 @@ export class DevFlowCommands {
    * @param dir - Directory to search
    * @returns Found file path or null
    */
-  private findTOONFile(dir: string): string | null {
+  private async findTOONFile(dir: string): Promise<string | null> {
     const files = ['requirements-toon-integration.md', 'architecture-toon-integration.md', 'detailed-design-toon-integration.md', 'test-specification-toon-integration.md'];
 
     for (const file of files) {
       const filePath = path.join(dir, file);
       try {
-        if (await fs.access(filePath).then(() => true).catch(() => false))) {
-          return filePath;
-        }
+        await fs.access(filePath);
+        return filePath;
       } catch {
         // Continue
       }
