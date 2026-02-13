@@ -1,19 +1,19 @@
 {
-  "name": "devflow-enforcer-marketplace",
+  "name": "devflow-enforcer",
   "owner": {
     "name": "Sefa Ocakli",
     "email": "sefa.ocakli@daiichi.local"
   },
   "metadata": {
     "description": "DevFlow Enforcer plugin marketplace - Context-optimized workflow enforcement for Claude Code",
-    "version": "1.0.0"
+    "version": "2.0.1"
   },
   "plugins": [
     {
       "name": "devflow-enforcer",
-      "source": "./",
+      "source": "./slash-commands/",
       "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 14-phase quality gates",
-      "version": "2.0.0",
+      "version": "2.0.1",
       "homepage": "https://github.com/xarlord/devflow-enforcer",
       "repository": "https://github.com/xarlord/devflow-enforcer",
       "license": "MIT",
