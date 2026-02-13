@@ -27,6 +27,12 @@ load: true # Load only this agent spec when needed
    - Review code quality
    - Review against requirements
    - Identify potential issues
+   - **IMPORTANT:** After EACH phase, trigger review activity unless ALL of following are true:
+     * Specs are clear (no ambiguity)
+     * No findings require user resolution
+     * Absolutely necessary for user context
+   - Document findings in findings.md
+   - Return to appropriate phase (continue workflow, not block unless critical)
 
 3. **User Acceptance Testing** (Phase 7m)
    - Coordinate user testing
