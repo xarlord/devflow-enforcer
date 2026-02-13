@@ -41,13 +41,17 @@
 
 ## Recent Activity
 
-- 2026-02-13: Test Infrastructure UPDATE - 20/31 tests passing (64%)
-- 2026-02-13: Fixed token-counter tiktoken import (using get_encoding instead of encoding_for_model)
-- 2026-02-13: Fixed parser.ts import path from '../token-counter' to './token-counter'
-- 2026-02-13: Fixed async/await issues in commands/index.ts findTOONFile method
+- 2026-02-13: Test Infrastructure UPDATE - 15/31 tests passing (48%)
+- 2026-02-13: Fixed import paths (validator: ./schemas, parser/resolver types)
+- 2026-02-13: Fixed fs mock setup with statSync mocking
+- 2026-02-2026-02-13: Added guideTemplate method to DevFlowCommands class
+- 2026-02-13: Added quote string handling in TOON parser parseValue method
+- 2026-02-13: Fixed token-counter tiktoken import (using get_encoding)
+- 2026-02-13: Fixed async/await issues in commands/index.ts
 - 2026-02-13: Updated vitest.config.ts for better module resolution
 - 2026-02-13: Token Counter Tests: 15/15 passing (100%)
-- 2026-02-13: NOTE: Remaining 11 tests need fixes for module resolution and mock setup
+- 2026-02-13: Commands Tests: 12/16 passing (75%)
+- 2026-02-13: NOTE: Parser/Resolver/Validator tests have import issues, Wizard tests skipped (need readline mocking)
 - 2026-02-13: Phase 7 Sprint 1 COMPLETE - All 8 features implemented
 - 2026-02-13: TOON-FEAT-009 (Testing Infrastructure) COMPLETED
 - 2026-02-13: Created vitest.config.ts with coverage thresholds
