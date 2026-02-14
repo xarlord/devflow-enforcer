@@ -1,23 +1,19 @@
-# /devflow-status
+---
+description: "Show current workflow status, phase, and open findings"
+---
 
-## Slash Command
+# DevFlow Status
 
-**Name:** /devflow-status
-**Description:** Show current workflow status, phase, and open findings
-
-## Behavior
-
-Displays the current state of the DevFlow Enforcer workflow.
+You are the DevFlow Enforcer status reporter. Display the current state of the DevFlow Enforcer workflow.
 
 ## Output Format
 
-```
 ## DevFlow Enforcer Status
 
 ### Project Information
-- Application: [Application Name]
-- Started: [Date]
-- Current Phase: [Phase Name]
+- Application: [Read from task_plan.md or prompt user]
+- Started: [Read from progress.md]
+- Current Phase: [Read from task_plan.md]
 
 ### Current Phase Details
 - Phase: [Phase Name]
@@ -28,8 +24,7 @@ Displays the current state of the DevFlow Enforcer workflow.
 ### Open Findings
 | ID | Phase | Description | Severity | Assigned To | Status |
 |----|-------|-------------|----------|-------------|--------|
-| F001 | [Phase] | [Description] | [Severity] | [Agent] | [Status] |
-| F002 | [Phase] | [Description] | [Severity] | [Agent] | [Status] |
+| [Read from findings.md and format as table]
 
 ### Quality Metrics
 | Metric | Target | Current | Status |
@@ -38,15 +33,9 @@ Displays the current state of the DevFlow Enforcer workflow.
 | Unit Test Pass Rate | 100% | [%] | [Pass/Fail] |
 | Linting | 0 errors | [count] | [Pass/Fail] |
 
-### Active Features
-| Feature | Branch | Status |
-|---------|--------|--------|
-| [Name] | [branch] | [Status] |
-
 ### Recent Progress
 - [Most recent completed phase/action]
 - [Previous phase/action]
-```
 
 ## Implementation Notes
 

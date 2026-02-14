@@ -1,0 +1,25 @@
+{
+  "name": "devflow-enforcer",
+  "version": "2.0.1",
+  "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 14-phase quality gates",
+  "author": {
+    "name": "Sefa Ocakli",
+    "email": "sefa.ocakli@daiichi.local",
+    "url": "https://github.com/xarlord"
+  },
+  "repository": "https://github.com/xarlord/devflow-enforcer",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "claude",
+    "plugin",
+    "workflow",
+    "devops",
+    "sdlc",
+    "quality-gates",
+    "testing",
+    "code-review",
+    "context-optimization",
+    "software-development-lifecycle"
+  ]
+}

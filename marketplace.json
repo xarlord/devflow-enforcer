@@ -1,12 +1,22 @@
 {
-  "$schema": "http://registry.npmjs.org/claude/marketplace-plugin/v1",
-  "create": true,
-  "update": true,
-  "packages": [
+  "name": "devflow-enforcer",
+  "owner": {
+    "name": "Sefa Ocakli",
+    "email": "sefa.ocakli@daiichi.local"
+  },
+  "plugins": [
     {
-      "name": "DevFlow Enforcer",
-      "version": "2.0.0",
+      "name": "devflow-enforcer",
+      "source": "./",
       "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 14-phase quality gates",
+      "version": "2.0.1",
+      "homepage": "https://github.com/xarlord/devflow-enforcer",
+      "repository": "https://github.com/xarlord/devflow-enforcer",
+      "license": "MIT",
+      "author": {
+        "name": "Sefa Ocakli",
+        "email": "sefa.ocakli@daiichi.local"
+      },
       "keywords": [
         "claude-code",
         "claude",
@@ -19,40 +29,7 @@
         "code-review",
         "context-optimization",
         "software-development-lifecycle"
-      ],
-      "license": "MIT",
-      "author": {
-        "name": "Sefa Ocakli",
-        "email": "sefa.ocakli@daiichi.local",
-        "url": "https://github.com/xarlord"
-      },
-      "contributors": [
-        {
-          "name": "Claude (Anthropic)",
-          "email": "noreply@anthropic.com"
-        }
-      ],
-      "claude": {
-        "minVersion": "1.0",
-        "requires": [],
-        "provides": {
-          "workflow": "Enforces 14-phase software development process",
-          "agents": "15 specialized agents for different development tasks",
-          "documentation": "Auto-generated documentation and summaries"
-        }
-      },
-      "marketplace": {
-        "source": "https://github.com/xarlord/devflow-enforcer.git",
-        "packageName": "@xarlord/devflow-enforcer"
-      },
-      "manifests": {
-        "main": "index.js"
-      },
-      "repository": {
-        "type": "git",
-        "url": "https://github.com/xarlord/devflow-enforcer",
-        "directory": "devflow-enforcer"
-      }
+      ]
     }
-  }
+  ]
 }

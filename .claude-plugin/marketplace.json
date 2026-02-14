@@ -4,14 +4,10 @@
     "name": "Sefa Ocakli",
     "email": "sefa.ocakli@daiichi.local"
   },
-  "metadata": {
-    "description": "DevFlow Enforcer plugin marketplace - Context-optimized workflow enforcement for Claude Code",
-    "version": "2.0.1"
-  },
   "plugins": [
     {
       "name": "devflow-enforcer",
-      "source": "./slash-commands/",
+      "source": "./",
       "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 14-phase quality gates",
       "version": "2.0.1",
       "homepage": "https://github.com/xarlord/devflow-enforcer",
@@ -33,9 +29,7 @@
         "code-review",
         "context-optimization",
         "software-development-lifecycle"
-      ],
-      "category": "productivity",
-      "tags": ["workflow", "quality", "testing", "devops"]
+      ]
     }
   ]
 }
