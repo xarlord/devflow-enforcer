@@ -1,6 +1,6 @@
 {
   "name": "@xarlord/devflow-enforcer",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 14-phase quality gates",
   "keywords": [
     "claude-code",
