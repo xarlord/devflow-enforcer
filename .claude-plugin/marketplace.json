@@ -9,7 +9,7 @@
       "name": "devflow-enforcer",
       "source": "./",
       "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 14-phase quality gates",
-      "version": "2.0.1",
+      "version": "2.0.2",
       "homepage": "https://github.com/xarlord/devflow-enforcer",
       "repository": "https://github.com/xarlord/devflow-enforcer",
       "license": "MIT",
