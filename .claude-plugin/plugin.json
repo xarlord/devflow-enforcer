@@ -1,7 +1,7 @@
 {
   "name": "devflow-enforcer",
   "version": "2.1.0",
-  "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 14-phase quality gates, UI/UX, Android, and enhanced testing support",
+  "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 15-phase quality gates, UI/UX, Android, and enhanced testing support",
   "author": {
     "name": "Sefa Ocakli",
     "email": "sefa.ocakli@daiichi.local",
@@ -27,72 +27,5 @@
     "accessibility",
     "e2e-testing",
     "specification"
-  ],
-  "capabilities": {
-    "agents": {
-      "categories": [
-        "management",
-        "quality",
-        "coding",
-        "infrastructure",
-        "process",
-        "ui-ux",
-        "mobile",
-        "testing",
-        "specification"
-      ],
-      "total": 25,
-      "new": {
-        "ui-ux": ["ui-ux-designer", "accessibility-expert", "frontend-developer"],
-        "mobile": ["android-developer", "android-architect"],
-        "testing": ["ui-testing-agent", "visual-regression-agent"],
-        "specification": ["spec-linking-agent"]
-      }
-    },
-    "skills": {
-      "total": 19,
-      "new": [
-        "capture-lesson",
-        "context-checkpoint",
-        "ui-review",
-        "accessibility-audit",
-        "design-system",
-        "android-build",
-        "android-testing",
-        "play-store-deploy",
-        "e2e-testing",
-        "visual-testing",
-        "mobile-ui-testing",
-        "mutation-testing",
-        "coverage-analysis",
-        "test-generation",
-        "spec-traceability",
-        "spec-validation",
-        "coverage-mapping"
-      ]
-    },
-    "commands": {
-      "total": 15,
-      "new": [
-        "context-checkpoint",
-        "ui-review",
-        "accessibility-check",
-        "android-test",
-        "android-build",
-        "e2e-test",
-        "visual-test",
-        "test-coverage",
-        "mutation-test",
-        "spec-link",
-        "traceability"
-      ]
-    },
-    "workflowEnhancements": {
-      "lessonsEnforcement": true,
-      "postReviewLinting": true,
-      "proactiveContextManagement": true,
-      "specTraceability": true,
-      "coverageMapping": true
-    }
-  }
+  ]
 }
