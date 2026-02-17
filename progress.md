@@ -3,7 +3,7 @@
 **Project:** devflow-enforcer Plugin Extension
 **Version:** 2.0.1 → 2.1.0
 **Branch:** feature/extend-agents-tools-skills
-**Status:** Planning Complete, Ready for Implementation
+**Status:** Planning Complete (with Critical Fixes), Ready for Implementation
 **Updated:** 2026-02-17
 
 ---
@@ -35,11 +35,26 @@
 - Analyzed 14-phase workflow
 - Read agent, skill, and command formats
 
-#### 10:55 - Planning Complete
+#### 10:55 - Initial Planning Complete
 - Created comprehensive task_plan.md
 - Updated findings.md with research results
 - Updated progress.md with session log
 - Ready for implementation
+
+#### 11:10 - Critical Issues Identified
+- User reported 3 critical workflow enforcement issues:
+  1. **Lessons learned not enforced when issue fixed**
+  2. **Linting not enforced after code review**
+  3. **Context window management not proactive**
+
+#### 11:20 - Updated Plan with Critical Fixes
+- Analyzed workflow-enforcer.md and context-pruner.md
+- Identified root causes for all 3 issues
+- Updated task_plan.md with Phase 0: Critical Workflow Fixes
+- Updated findings.md with detailed issue analysis
+- Added new skill: `capture-lesson`
+- Added new command: `/context-checkpoint`
+- Added new phase: `post-review-linting` (11.1)
 
 ---
 
@@ -48,6 +63,7 @@
 | Phase | Description | Status |
 |-------|-------------|--------|
 | 0 | Planning & Setup | ✅ Complete |
+| **0.5** | **Critical Workflow Fixes** | ⏳ **PENDING (PRIORITY)** |
 | 1 | Foundation Setup | ⏳ Pending |
 | 2 | UI/UX Implementation | ⏳ Pending |
 | 3 | Android Development | ⏳ Pending |
@@ -59,7 +75,45 @@
 
 ---
 
-## Components Checklist
+## Critical Fixes Checklist (Phase 0.5)
+
+### Issue 1: Lessons Learned Enforcement
+| Task | Status |
+|------|--------|
+| Update FindingsManager.closeFinding() | ⏳ Pending |
+| Create LessonCapture interface | ⏳ Pending |
+| Create capture-lesson skill | ⏳ Pending |
+| Update all agents for lesson capture | ⏳ Pending |
+| Block phase transition without lessons | ⏳ Pending |
+
+### Issue 2: Post-Review Linting
+| Task | Status |
+|------|--------|
+| Add post-review-linting phase (11.1) | ⏳ Pending |
+| Update workflow phases array | ⏳ Pending |
+| Add quality gate enforcement | ⏳ Pending |
+| Update main-workflow.md | ⏳ Pending |
+
+### Issue 3: Proactive Context Management
+| Task | Status |
+|------|--------|
+| Change thresholds (80% warn, 70% checkpoint, 60% clear) | ⏳ Pending |
+| Implement saveStateToDocumentation() | ⏳ Pending |
+| Implement clearContextAndReconstruct() | ⏳ Pending |
+| Create /context-checkpoint command | ⏳ Pending |
+| Update ContextManager | ⏳ Pending |
+| Update ContextPruner | ⏳ Pending |
+
+---
+
+## New Components Checklist
+
+### Critical Fixes Components
+| Component | Status |
+|-----------|--------|
+| capture-lesson skill | ⏳ Pending |
+| /context-checkpoint command | ⏳ Pending |
+| post-review-linting phase | ⏳ Pending |
 
 ### New Agents (8 planned)
 | Agent | Status |
@@ -76,6 +130,7 @@
 ### New Skills (12 planned)
 | Skill | Status |
 |-------|--------|
+| capture-lesson (CRITICAL) | ⏳ Pending |
 | ui-review | ⏳ Pending |
 | accessibility-audit | ⏳ Pending |
 | design-system | ⏳ Pending |
@@ -89,9 +144,10 @@
 | spec-traceability | ⏳ Pending |
 | coverage-mapping | ⏳ Pending |
 
-### New Commands (8 planned)
+### New Commands (9 planned)
 | Command | Status |
 |---------|--------|
+| /context-checkpoint (CRITICAL) | ⏳ Pending |
 | /ui-review | ⏳ Pending |
 | /accessibility-check | ⏳ Pending |
 | /android-test | ⏳ Pending |
@@ -111,13 +167,17 @@
 ---
 
 ## Next Steps
-1. Begin Phase 1: Foundation Setup
-2. Create directory structure for new agent categories
-3. Update plugin.json and claude.json
-4. Create base templates
+1. **[PRIORITY] Begin Phase 0.5: Critical Workflow Fixes**
+   - Fix lessons learned enforcement
+   - Fix post-review linting
+   - Fix proactive context management
+2. Begin Phase 1: Foundation Setup
+3. Create directory structure for new agent categories
+4. Update plugin.json and claude.json
+5. Create base templates
 
 ---
 
 ## Version History
-- v2.1.0 (Target) - Extended with UI/UX, Android, UI Testing, Spec Linking
+- v2.1.0 (Target) - Extended with UI/UX, Android, UI Testing, Spec Linking + Critical Fixes
 - v2.0.1 (Current) - Stable production release

@@ -13,15 +13,132 @@
 **Branch:** feature/extend-agents-tools-skills
 
 ### User Requirements
-1. Add new agents, tools, skills, and scripts
-2. Focus areas:
+1. **[PRIORITY] Fix critical workflow enforcement issues**
+   - Lessons learned not enforced when issue fixed
+   - Linting not enforced after code review
+   - Context window management not proactive (triggers too late)
+2. Add new agents, tools, skills, and scripts
+3. Focus areas:
    - UI/UX development
    - Android development
    - UI Testing
    - Unit Testing
    - Test Specification - Product specification link
-3. Work in new workbranch
-4. Create PR to merge to main after development
+4. Work in new workbranch
+5. Create PR to merge to main after development
+
+---
+
+## Critical Workflow Issues Discovered
+
+### Issue 1: Lessons Learned Not Enforced
+**Location:** `core/workflow-enforcer.md` - FindingsManager.closeFinding()
+**Problem:** When a finding is closed, no lesson learned is captured
+**Impact:** Knowledge loss, repeated mistakes
+**Root Cause:** closeFinding() only sets status without capturing lesson
+
+**Current Code (line 400-409):**
+```typescript
+closeFinding(findingId: string): void {
+    const finding = this.findings.find(f => f.id === findingId);
+    if (finding) {
+        finding.status = "Closed";
+        finding.resolvedAt = new Date();
+        this.updateFindingsFile(finding.phase);
+    }
+}
+```
+
+**Fix Required:**
+```typescript
+closeFinding(findingId: string, lesson: LessonLearned): void {
+    const finding = this.findings.find(f => f.id === findingId);
+    if (finding) {
+        // MANDATORY: Capture lesson learned
+        if (!lesson || !lesson.description) {
+            throw new Error("Cannot close finding without capturing lesson learned");
+        }
+        this.saveLessonLearned(lesson);
+
+        finding.status = "Closed";
+        finding.resolvedAt = new Date();
+        this.updateFindingsFile(finding.phase);
+    }
+}
+```
+
+### Issue 2: Linting Not Enforced After Code Review
+**Location:** `core/workflow-enforcer.md` - WORKFLOW_PHASES
+**Problem:** Linting runs before code review, not after
+**Impact:** Code review fixes may introduce lint errors
+**Root Cause:** Workflow phase order doesn't include post-review linting
+
+**Current Phase Order:**
+```
+9: development
+10: linting ← Only runs here
+11: code-review
+12: unit-testing
+```
+
+**Fix Required - Add Phase 11.1:**
+```
+9: development
+10: linting
+11: code-review
+11.1: post-review-linting ← NEW: Enforce after review fixes
+12: unit-testing
+```
+
+**Quality Gate for Phase 11.1:**
+```typescript
+{
+    id: "post-review-linting",
+    name: "Post-Review Linting Check",
+    order: 11.5,
+    required: true,
+    spawns: [],
+    createsFindings: false,
+    qualityGates: ["no-lint-errors"]
+}
+```
+
+### Issue 3: Context Window Management Not Proactive
+**Location:** `core/workflow-enforcer.md` - ContextManager, `core/context-pruner.md`
+**Problem:** Context management triggers at 5%, too late - Claude auto-compact triggers first
+**Impact:** State lost, workflow broken, documentation not saved
+**Root Cause:** Thresholds set too low, no proactive checkpoint
+
+**Current Thresholds:**
+```typescript
+private CONTEXT_THRESHOLD = 0.05; // 5% - TOO LATE
+// ContextPruner: threshold: 80%, emergencyThreshold: 90%
+```
+
+**Fix Required - Proactive Thresholds:**
+```typescript
+interface ContextThresholds {
+    warningLevel: 80;      // Warn user, suggest checkpoint
+    checkpointLevel: 70;   // MANDATORY: Save state to docs
+    clearLevel: 60;        // Clear context proactively
+    reconstructLevel: 50;  // Reconstruct from docs
+}
+```
+
+**New Behavior:**
+```
+Context Usage | Action
+--------------|--------------------------------------------------
+80%           | WARN: "Context at 80%, consider checkpoint"
+70%           | MANDATORY: execute saveStateToDocumentation()
+60%           | Clear context, prepare for reconstruction
+50%           | Reconstruct from task_plan.md, findings.md, progress.md
+```
+
+**Why This Matters:**
+- Claude's auto-compaction is unpredictable
+- Must save state BEFORE auto-compact triggers
+- Documentation is the source of truth for reconstruction
 
 ---
 
@@ -173,6 +290,10 @@ You are the [role]. Your job is to:
 ## Technical Decisions
 | Decision | Rationale |
 |----------|-----------|
+| **Priority: Fix workflow issues first** | Critical bugs affect all development |
+| **Lessons: Mandatory on finding close** | Prevent knowledge loss |
+| **Linting: Add post-review phase** | Catch lint errors from review fixes |
+| **Context: Proactive at 70%** | Beat Claude auto-compact |
 | Create `agents/ui-ux/` directory | Organize UI/UX agents separately |
 | Create `agents/mobile/` directory | Organize mobile/Android agents separately |
 | Create `agents/specification/` directory | New category for spec linking |

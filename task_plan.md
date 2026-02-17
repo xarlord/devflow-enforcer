@@ -7,12 +7,81 @@
 **Target:** Merge to main via PR
 
 ## Goal
-Extend the devflow-enforcer plugin to add new agents, tools, skills, and scripts for:
-1. UI/UX Development
-2. Android Development
-3. UI Testing
-4. Enhanced Unit Testing
-5. Test Specification with Product Specification Linking
+Extend the devflow-enforcer plugin to:
+1. **[PRIORITY] Fix critical workflow enforcement issues**
+2. Add new agents, tools, skills, and scripts for:
+   - UI/UX Development
+   - Android Development
+   - UI Testing
+   - Enhanced Unit Testing
+   - Test Specification with Product Specification Linking
+
+---
+
+## PRIORITY PHASE: Critical Workflow Fixes
+
+### Issue 1: Lessons Learned Not Enforced When Issue Fixed
+**Problem:** When a finding/issue is closed, the workflow does not enforce documenting what was learned.
+
+**Current Behavior:**
+```
+closeFinding(findingId) → status = "Closed" → DONE
+```
+
+**Required Behavior:**
+```
+closeFinding(findingId) → PROMPT for lesson learned → SAVE to lessons-learned.md → status = "Closed"
+```
+
+**Fix Required:**
+- [ ] Update `FindingsManager.closeFinding()` to require lesson documentation
+- [ ] Add `LessonCapture` interface to findings closure
+- [ ] Create `capture-lesson` skill for mandatory lesson capture
+- [ ] Update all agents to prompt for lessons when closing findings
+- [ ] Block phase transition if lessons not captured for closed findings
+
+### Issue 2: Linting Not Enforced After Code Review
+**Problem:** Linting only runs before code review. If code changes are made during review fixes, linting is not re-run.
+
+**Current Flow:**
+```
+Development → Linting (7d) → Code Review (7e) → Unit Testing (7f)
+```
+
+**Required Flow:**
+```
+Development → Linting (7d) → Code Review (7e) → Post-Review Linting (7e.1) → Unit Testing (7f)
+```
+
+**Fix Required:**
+- [ ] Add post-review linting phase (7e.1) after code review
+- [ ] Update workflow phases to include `post-review-linting`
+- [ ] Quality gate: `no-lint-errors` must pass after code review
+- [ ] Loop back to code review if linting fails (code changes introduced lint errors)
+
+### Issue 3: Context Window Management Not Proactive
+**Problem:** Context management triggers at 5% (too late). Claude's auto-compaction triggers before documentation is saved.
+
+**Current Behavior:**
+```
+Context < 5% → handleLowContext() → (often too late, auto-compact already triggered)
+```
+
+**Required Behavior:**
+```
+Context < 80% → WARN and suggest checkpoint
+Context < 70% → MANDATORY checkpoint - save all state to docs
+Context < 60% → Clear context proactively
+Context < 50% → Reconstruct from documentation
+```
+
+**Fix Required:**
+- [ ] Change threshold from 5% to 80% for warning, 70% for mandatory checkpoint
+- [ ] Add `saveStateToDocumentation()` method called at 70%
+- [ ] Add `clearContextAndReconstruct()` method at 60%
+- [ ] Create `context-checkpoint` command for manual checkpointing
+- [ ] Update ContextManager to work BEFORE Claude auto-compaction
+- [ ] Document reconstruction priority order
 
 ---
 
@@ -169,6 +238,27 @@ Extend the devflow-enforcer plugin to add new agents, tools, skills, and scripts
 ---
 
 ## Implementation Phases
+
+### Phase 0: Critical Workflow Fixes (PRIORITY)
+- [ ] **Issue 1: Lessons Learned Enforcement**
+  - [ ] Update FindingsManager.closeFinding() to require lesson
+  - [ ] Create LessonCapture interface
+  - [ ] Create capture-lesson skill
+  - [ ] Update all agents for lesson capture
+  - [ ] Block phase transition without lessons
+
+- [ ] **Issue 2: Post-Review Linting**
+  - [ ] Add post-review-linting phase (7e.1)
+  - [ ] Update workflow phases
+  - [ ] Add quality gate enforcement
+  - [ ] Update main-workflow.md
+
+- [ ] **Issue 3: Proactive Context Management**
+  - [ ] Change thresholds (80% warn, 70% checkpoint, 60% clear)
+  - [ ] Implement saveStateToDocumentation()
+  - [ ] Implement clearContextAndReconstruct()
+  - [ ] Create /context-checkpoint command
+  - [ ] Update ContextManager and ContextPruner
 
 ### Phase 1: Foundation Setup
 - [ ] Create directory structure for new agent categories
