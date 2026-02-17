@@ -1,6 +1,7 @@
 ---
 name: devflow-start
 description: Start a new DevFlow Enforcer project - asks for application name and initializes git repository. Use when beginning a new software development project or when the user wants to start the DevFlow 14-phase workflow.
+user-invocable: true
 ---
 
 # DevFlow Start
