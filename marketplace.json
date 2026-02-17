@@ -8,8 +8,8 @@
     {
       "name": "devflow-enforcer",
       "source": "./",
-      "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 14-phase quality gates",
-      "version": "2.0.2",
+      "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 15-phase quality gates, UI/UX, Android, Testing & Spec Linking",
+      "version": "2.1.0",
       "homepage": "https://github.com/xarlord/devflow-enforcer",
       "repository": "https://github.com/xarlord/devflow-enforcer",
       "license": "MIT",
@@ -28,7 +28,30 @@
         "testing",
         "code-review",
         "context-optimization",
-        "software-development-lifecycle"
+        "software-development-lifecycle",
+        "ui-ux",
+        "android",
+        "mobile",
+        "accessibility",
+        "e2e-testing",
+        "specification",
+        "traceability"
+      ],
+      "capabilities": {
+        "agents": 25,
+        "skills": 19,
+        "commands": 15,
+        "workflowPhases": 15
+      },
+      "features": [
+        "Lessons enforcement when closing findings",
+        "Post-review linting phase",
+        "Proactive context management",
+        "WCAG 2.1 AA accessibility support",
+        "Android development support",
+        "E2E and visual testing",
+        "Mutation testing with Stryker",
+        "Requirement-to-test traceability"
       ]
     }
   ]
