@@ -296,11 +296,11 @@ Context < 50% → Reconstruct from documentation
 - [x] Create new testing commands (commands/test-coverage.md, commands/mutation-test.md)
 
 ### Phase 6: Spec Linking Implementation
-- [ ] Create spec linking agent
-- [ ] Create spec traceability skill
-- [ ] Create spec validation skill
-- [ ] Create spec templates
-- [ ] Create spec commands
+- [x] Create spec linking agent (agents/specification/spec-linking-agent.md)
+- [x] Create spec traceability skill (skills/spec-traceability/SKILL.md)
+- [x] Create spec validation skill (skills/spec-validation/SKILL.md)
+- [x] Create coverage mapping skill (skills/coverage-mapping/SKILL.md)
+- [x] Create spec commands (commands/spec-link.md, commands/traceability.md)
 
 ### Phase 7: Integration & Testing
 - [ ] Update main workflow
