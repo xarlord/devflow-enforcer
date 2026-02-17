@@ -103,6 +103,15 @@ START
   │
   ▼
 ┌─────────────────────────────────────────────────────────────────────┐
+│ STAGE 7e.1: Post-Review Linting [CRITICAL FIX]                    │
+│ - Quality Gate: no-lint-errors                                    │
+│ - Output: Clean code after review fixes                           │
+│ - Loop back to 7e if lint errors introduced by review fixes       │
+│ - Purpose: Catch lint errors from code review changes             │
+└─────────────────────────────────────────────────────────────────────┘
+  │
+  ▼
+┌─────────────────────────────────────────────────────────────────────┐
 │ STAGE 7f: Unit Testing                                           │
 │ - Spawn: Testing Agent + Coding Agent                             │
 │ - Creates findings                                                │
@@ -185,8 +194,9 @@ NEXT FEATURE (back to stage 7a)
 ### 1. No Skipping Stages
 All stages must be completed in order. Cannot skip from Stage 1 to Stage 5.
 
-### 2. Findings Must Close
+### 2. Findings Must Close With Lessons [CRITICAL FIX]
 Any stage that creates findings must have those findings closed before proceeding.
+**CRITICAL:** All closed findings MUST have lessons captured. Cannot close findings without documenting what was learned.
 
 ### 3. Quality Gates Must Pass
 Quality gates that fail trigger a loop back to the appropriate stage.
@@ -194,8 +204,23 @@ Quality gates that fail trigger a loop back to the appropriate stage.
 ### 4. Agents Must Check Lessons
 All agents must check lessons-learned before starting work (Stage 7c).
 
-### 5. Context Management
-When context window < 5%, save state to files and reconstruct.
+### 5. Context Management - Proactive [CRITICAL FIX]
+**NEW BEHAVIOR:** Context management works BEFORE Claude auto-compaction triggers.
+
+| Context Level | Usage | Action |
+|---------------|-------|--------|
+| Normal | < 70% | No action |
+| Warning | 70% | Warn user, suggest checkpoint |
+| Checkpoint | 70% | **MANDATORY checkpoint** - save state to docs |
+| Clear | 60% | Clear context proactively |
+| Reconstruct | 50% | Reconstruct from documentation |
+
+**Use `/context-checkpoint` to manually trigger checkpoint.**
+
+### 6. Post-Review Linting [CRITICAL FIX]
+After code review (Stage 7e), linting MUST run again (Stage 7e.1) to catch errors introduced by review fixes.
+- If lint errors found: Loop back to code review
+- Only proceed to unit testing when lint passes
 
 ## Quality Metrics Summary
 
@@ -204,7 +229,8 @@ When context window < 5%, save state to files and reconstruct.
 | Requirements Clarity | Clear | Loop to Stage 1 |
 | Requirements Conciseness | Concise | Loop to Stage 1 |
 | Requirements Verifiability | Verifiable | Loop to Stage 1 |
-| Linting | 0 errors | Loop to Stage 7c |
+| Linting (7d) | 0 errors | Loop to Stage 7c |
+| Post-Review Linting (7e.1) | 0 errors | Loop to Stage 7e |
 | Unit Test Coverage | 95% | Loop to Stage 7c |
 | Unit Test Pass Rate | 100% | Loop to Stage 7c |
 | Security Vulnerabilities | 0 critical/high | Loop to Stage 7c |
@@ -218,8 +244,11 @@ When context window < 5%, save state to files and reconstruct.
 |---------|--------|
 | /devflow-start | Start new project workflow |
 | /devflow-continue | Resume workflow from current stage |
+| /context-checkpoint | Manual context checkpoint |
 | New feature request | Start Stage 7a loop for feature |
-| Context window < 5% | Save and reconstruct context |
+| Context window >= 70% | MANDATORY checkpoint |
+| Context window >= 60% | Clear context |
+| Context window >= 50% | Reconstruct from docs |
 
 ## Completion Criteria
 
