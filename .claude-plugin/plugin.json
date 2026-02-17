@@ -1,7 +1,7 @@
 {
   "name": "devflow-enforcer",
-  "version": "2.0.1",
-  "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 14-phase quality gates",
+  "version": "2.1.0",
+  "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 14-phase quality gates, UI/UX, Android, and enhanced testing support",
   "author": {
     "name": "Sefa Ocakli",
     "email": "sefa.ocakli@daiichi.local",
@@ -20,6 +20,70 @@
     "testing",
     "code-review",
     "context-optimization",
-    "software-development-lifecycle"
-  ]
+    "software-development-lifecycle",
+    "ui-ux",
+    "android",
+    "mobile",
+    "accessibility",
+    "e2e-testing",
+    "specification"
+  ],
+  "capabilities": {
+    "agents": {
+      "categories": [
+        "management",
+        "quality",
+        "coding",
+        "infrastructure",
+        "process",
+        "ui-ux",
+        "mobile",
+        "specification"
+      ],
+      "total": 23,
+      "new": {
+        "ui-ux": ["ui-ux-designer", "accessibility-expert", "frontend-developer"],
+        "mobile": ["android-developer", "android-architect"],
+        "specification": ["spec-linking-agent"]
+      }
+    },
+    "skills": {
+      "total": 16,
+      "new": [
+        "capture-lesson",
+        "ui-review",
+        "accessibility-audit",
+        "design-system",
+        "android-build",
+        "android-testing",
+        "play-store-deploy",
+        "e2e-testing",
+        "visual-testing",
+        "mobile-ui-testing",
+        "mutation-testing",
+        "spec-traceability",
+        "coverage-mapping"
+      ]
+    },
+    "commands": {
+      "total": 13,
+      "new": [
+        "context-checkpoint",
+        "ui-review",
+        "accessibility-check",
+        "android-test",
+        "android-build",
+        "e2e-test",
+        "visual-test",
+        "test-coverage",
+        "spec-link"
+      ]
+    },
+    "workflowEnhancements": {
+      "lessonsEnforcement": true,
+      "postReviewLinting": true,
+      "proactiveContextManagement": true,
+      "specTraceability": true
+    }
+  }
 }
