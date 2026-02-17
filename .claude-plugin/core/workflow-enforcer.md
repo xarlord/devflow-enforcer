@@ -157,6 +157,17 @@ const WORKFLOW_PHASES: Phase[] = [
     createsFindings: true,
     qualityGates: []
   },
+  // CRITICAL FIX: Post-Review Linting (Phase 11.1)
+  // Enforces linting after code review fixes are applied
+  {
+    id: "post-review-linting",
+    name: "Post-Review Linting Check",
+    order: 11.5,
+    required: true,
+    spawns: [],
+    createsFindings: false,
+    qualityGates: ["no-lint-errors"]
+  },
   {
     id: "unit-testing",
     name: "Unit Testing",
@@ -368,10 +379,32 @@ interface Finding {
   status: "Open" | "In Progress" | "Closed";
   createdAt: Date;
   resolvedAt?: Date;
+  lessonLearned?: LessonLearned;  // CRITICAL FIX: Track lesson when closing
+}
+
+// CRITICAL FIX: Lesson Capture Interface
+interface LessonLearned {
+  id: string;
+  findingId: string;
+  category: "Technical" | "Process" | "Communication" | "Tooling";
+  title: string;
+  description: string;
+  rootCause: string;
+  solution: string;
+  preventionSteps: string[];
+  tags: string[];
+  priority: "Critical" | "High" | "Medium" | "Low";
+  capturedAt: Date;
+  capturedBy: AgentType;
 }
 
 class FindingsManager {
   private findings: Finding[] = [];
+  private lessonsManager: LessonsManager;
+
+  constructor() {
+    this.lessonsManager = new LessonsManager();
+  }
 
   // Create findings for a phase
   createFindings(phase: string): void {
@@ -397,21 +430,75 @@ class FindingsManager {
     return phaseFindings.every(f => f.status === "Closed");
   }
 
-  // Close a finding
-  closeFinding(findingId: string): void {
+  // CRITICAL FIX: Close a finding - MUST capture lesson learned
+  // This is now MANDATORY - cannot close without lesson
+  closeFinding(findingId: string, lesson: LessonLearned): void {
     const finding = this.findings.find(f => f.id === findingId);
-    if (finding) {
-      finding.status = "Closed";
-      finding.resolvedAt = new Date();
-      this.updateFindingsFile(finding.phase);
+
+    if (!finding) {
+      throw new Error(`Finding ${findingId} not found`);
     }
+
+    // CRITICAL ENFORCEMENT: Lesson must be provided
+    if (!lesson || !lesson.description || !lesson.solution) {
+      throw new Error(
+        `CANNOT CLOSE FINDING: Lesson learned is MANDATORY.\n` +
+        `Finding: ${finding.description}\n` +
+        `Required fields: category, title, description, rootCause, solution\n` +
+        `Usage: closeFinding(findingId, { category, title, description, rootCause, solution, preventionSteps })`
+      );
+    }
+
+    // Save the lesson learned
+    lesson.findingId = findingId;
+    lesson.capturedAt = new Date();
+    lesson.capturedBy = finding.assignedTo;
+    this.lessonsManager.saveLesson(lesson);
+
+    // Update finding with lesson reference
+    finding.lessonLearned = lesson;
+    finding.status = "Closed";
+    finding.resolvedAt = new Date();
+
+    // Update files
+    this.updateFindingsFile(finding.phase);
+    this.lessonsManager.writeLessonsToFile();
+
+    console.log(`Finding ${findingId} closed with lesson: ${lesson.title}`);
+  }
+
+  // DEPRECATED: Legacy method that enforces lesson capture
+  closeFindingWithoutLesson(findingId: string): never {
+    throw new Error(
+      `DEPRECATED: Cannot close findings without lesson capture.\n` +
+      `Use: closeFinding(findingId, lesson) instead.\n` +
+      `This ensures knowledge retention and prevents repeated mistakes.`
+    );
   }
 
   // Enforce findings closure before proceeding (requirement #11)
+  // CRITICAL FIX: Also verify lessons captured
   enforceFindingsClosure(phase: string): void {
-    if (!this.areFindingsClosed(phase)) {
+    const phaseFindings = this.findings.filter(f => f.phase === phase);
+    const openFindings = phaseFindings.filter(f => f.status !== "Closed");
+
+    if (openFindings.length > 0) {
       throw new Error(
-        `Cannot proceed. ${phase} has open findings that must be closed first.`
+        `Cannot proceed. ${phase} has ${openFindings.length} open findings that must be closed first.\n` +
+        `Open findings: ${openFindings.map(f => f.id).join(', ')}`
+      );
+    }
+
+    // CRITICAL FIX: Verify all closed findings have lessons
+    const closedWithoutLesson = phaseFindings.filter(
+      f => f.status === "Closed" && !f.lessonLearned
+    );
+
+    if (closedWithoutLesson.length > 0) {
+      throw new Error(
+        `Cannot proceed. ${phase} has ${closedWithoutLesson.length} closed findings without lessons learned.\n` +
+        `Findings requiring lessons: ${closedWithoutLesson.map(f => f.id).join(', ')}\n` +
+        `All findings must capture lessons before phase transition.`
       );
     }
   }
@@ -420,6 +507,58 @@ class FindingsManager {
     // Return appropriate agent for phase
     const phaseDef = WORKFLOW_PHASES.find(p => p.id === phase);
     return phaseDef?.spawns[0] || "project-lead";
+  }
+}
+
+// CRITICAL FIX: Lessons Manager for handling lesson persistence
+class LessonsManager {
+  private lessons: LessonLearned[] = [];
+
+  saveLesson(lesson: LessonLearned): void {
+    lesson.id = this.generateLessonId();
+    this.lessons.push(lesson);
+  }
+
+  getLessonsByTag(tag: string): LessonLearned[] {
+    return this.lessons.filter(l => l.tags.includes(tag));
+  }
+
+  getHighPriorityLessons(): LessonLearned[] {
+    return this.lessons.filter(l => l.priority === "High" || l.priority === "Critical");
+  }
+
+  writeLessonsToFile(): void {
+    const content = this.formatLessonsForFile();
+    // Write to templates/lessons-learned.md
+    writeFile('templates/lessons-learned.md', content);
+  }
+
+  private formatLessonsForFile(): string {
+    return `# Lessons Learned
+
+This file is auto-generated when findings are closed.
+
+## Critical & High Priority Lessons
+
+${this.getHighPriorityLessons().map(l => `
+### ${l.title}
+- **Category:** ${l.category}
+- **Priority:** ${l.priority}
+- **Root Cause:** ${l.rootCause}
+- **Solution:** ${l.solution}
+- **Prevention:** ${l.preventionSteps.join(', ')}
+- **Tags:** ${l.tags.join(', ')}
+- **Captured:** ${l.capturedAt.toISOString()}
+`).join('\n')}
+
+## All Lessons
+
+${this.lessons.map(l => `- [${l.priority}] ${l.title} (${l.category})`).join('\n')}
+`;
+  }
+
+  private generateLessonId(): string {
+    return `LESSON-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 }
 ```
@@ -512,6 +651,7 @@ class QualityGateValidator {
   }
 
   // Determine which phase to loop back to if gates fail
+  // CRITICAL FIX: Updated to include post-review-linting
   private determineLoopBackPhase(results: QualityMetric[]): string | null {
     const failed = results.filter(r => !r.passed);
 
@@ -519,7 +659,7 @@ class QualityGateValidator {
     const gateToPhase: Record<QualityGate, string> = {
       "coverage-95": "development",
       "pass-rate-100": "development",
-      "no-lint-errors": "linting",
+      "no-lint-errors": "post-review-linting",  // CRITICAL FIX: Loop to post-review linting
       "no-critical-vulnerabilities": "static-security",
       "integration-pass": "integration-testing",
       "bdd-pass": "bdd-testing",
@@ -542,51 +682,290 @@ class QualityGateValidator {
 
 ### 5. Context Manager
 
-Manages context window and handles reconstruction when < 5%.
+CRITICAL FIX: Proactive context management - works BEFORE Claude auto-compaction triggers.
+
+**Problem:** Old threshold of 5% was too late - Claude's auto-compaction triggered first.
+**Solution:** Proactive thresholds with mandatory checkpointing at 70%.
 
 ```typescript
+// CRITICAL FIX: Proactive context thresholds
+interface ContextThresholds {
+  warningLevel: number;      // 80% - Warn user
+  checkpointLevel: number;   // 70% - MANDATORY checkpoint
+  clearLevel: number;        // 60% - Clear context
+  reconstructLevel: number;  // 50% - Reconstruct from docs
+}
+
+interface ContextState {
+  currentUsage: number;
+  lastCheckpoint: Date;
+  checkpointFile: string;
+  pendingActions: string[];
+}
+
 class ContextManager {
-  private CONTEXT_THRESHOLD = 0.05; // 5%
+  // CRITICAL FIX: Proactive thresholds - work BEFORE Claude auto-compact
+  private thresholds: ContextThresholds = {
+    warningLevel: 80,      // Warn at 80% usage
+    checkpointLevel: 70,   // MANDATORY checkpoint at 70%
+    clearLevel: 60,        // Clear context at 60%
+    reconstructLevel: 50   // Reconstruct at 50%
+  };
 
-  // Check if context window is running low
-  async checkContextWindow(): Promise<boolean> {
+  private state: ContextState = {
+    currentUsage: 0,
+    lastCheckpoint: new Date(),
+    checkpointFile: '.devflow/context-checkpoint.md',
+    pendingActions: []
+  };
+
+  // Check context window status and take action
+  // CRITICAL FIX: This must be called AFTER every major operation
+  async checkAndHandleContext(): Promise<ContextActionResult> {
     const usage = await this.getContextUsage();
-    return usage < this.CONTEXT_THRESHOLD;
-  }
+    this.state.currentUsage = usage;
 
-  // Handle low context (requirement #19)
-  async handleLowContext(): Promise<void> {
-    if (await this.checkContextWindow()) {
-      // Update all documentation
-      await this.updateAllDocumentation();
-
-      // Clear context
-      await this.clearContext();
-
-      // Reconstruct from documentation
-      await this.reconstructContext();
+    // CRITICAL: Check in order of severity
+    if (usage >= this.thresholds.reconstructLevel) {
+      // At 50% - already cleared, now reconstruct
+      return await this.reconstructFromDocumentation();
     }
+
+    if (usage >= this.thresholds.clearLevel) {
+      // At 60% - clear context and prepare for reconstruction
+      return await this.clearContextAndPrepare();
+    }
+
+    if (usage >= this.thresholds.checkpointLevel) {
+      // At 70% - MANDATORY checkpoint
+      return await this.mandatoryCheckpoint();
+    }
+
+    if (usage >= this.thresholds.warningLevel) {
+      // At 80% - warn user
+      return await this.warnUser();
+    }
+
+    return { action: 'none', message: 'Context usage normal' };
   }
 
-  private async updateAllDocumentation(): Promise<void> {
-    // Save current state to files
-    await this.saveCurrentPhase();
-    await this.saveFindings();
-    await this.saveTaskStatus();
-    await this.saveDecisions();
+  // CRITICAL FIX: Mandatory checkpoint at 70%
+  // This MUST complete before Claude auto-compact triggers
+  async mandatoryCheckpoint(): Promise<ContextActionResult> {
+    console.warn('⚠️ CONTEXT CHECKPOINT REQUIRED (70% threshold reached)');
+    console.warn('Saving all state to documentation...');
+
+    // 1. Save all current state
+    await this.saveStateToDocumentation();
+
+    // 2. Create checkpoint file
+    await this.createCheckpointFile();
+
+    // 3. Update state
+    this.state.lastCheckpoint = new Date();
+
+    return {
+      action: 'checkpoint',
+      message: 'Mandatory checkpoint completed. State saved to documentation.',
+      checkpointFile: this.state.checkpointFile,
+      nextAction: 'Continue working. Context will be cleared at 60% threshold.'
+    };
   }
 
-  private async reconstructContext(): Promise<void> {
-    // Read state from files
+  // CRITICAL FIX: Save all state to documentation
+  async saveStateToDocumentation(): Promise<void> {
+    const timestamp = new Date().toISOString();
+
+    // Save to task_plan.md
+    await this.updateTaskPlan(timestamp);
+
+    // Save to findings.md
+    await this.updateFindings(timestamp);
+
+    // Save to progress.md
+    await this.updateProgress(timestamp);
+
+    // Save lessons learned
+    await this.updateLessonsLearned();
+
+    console.log('✅ All state saved to documentation');
+  }
+
+  // CRITICAL FIX: Clear context and prepare for reconstruction
+  async clearContextAndPrepare(): Promise<ContextActionResult> {
+    console.warn('🧹 CLEARING CONTEXT (60% threshold reached)');
+    console.warn('Context will be reconstructed from documentation...');
+
+    // Ensure checkpoint is saved
+    await this.saveStateToDocumentation();
+
+    // Create reconstruction instructions
+    const reconstructionGuide = await this.createReconstructionGuide();
+
+    return {
+      action: 'clear',
+      message: 'Context cleared. Reconstruction guide created.',
+      reconstructionGuide,
+      nextAction: 'Context will auto-reconstruct from documentation at 50% threshold.'
+    };
+  }
+
+  // CRITICAL FIX: Reconstruct context from documentation
+  async reconstructFromDocumentation(): Promise<ContextActionResult> {
+    console.log('📖 RECONSTRUCTING CONTEXT from documentation...');
+
+    // Read state from files in priority order
     const taskPlan = await this.readFile("task_plan.md");
     const findings = await this.readFile("findings.md");
     const progress = await this.readFile("progress.md");
     const architecture = await this.readFile("docs/architecture.md");
     const lessonsLearned = await this.readFile("templates/lessons-learned.md");
 
-    // Provide to agent for reconstruction
-    return { taskPlan, findings, progress, architecture, lessonsLearned };
+    // Load checkpoint if exists
+    const checkpoint = await this.readCheckpointFile();
+
+    // Provide reconstruction data
+    return {
+      action: 'reconstruct',
+      message: 'Context reconstructed from documentation.',
+      reconstructedContext: {
+        taskPlan,
+        findings,
+        progress,
+        architecture,
+        lessonsLearned,
+        checkpoint
+      }
+    };
   }
+
+  // Warn user at 80%
+  private async warnUser(): Promise<ContextActionResult> {
+    return {
+      action: 'warn',
+      message: `⚠️ Context usage at ${this.state.currentUsage}%. Consider checkpointing soon.`,
+      suggestion: 'Use /context-checkpoint to save state manually.'
+    };
+  }
+
+  // Create checkpoint file for recovery
+  private async createCheckpointFile(): Promise<void> {
+    const checkpoint = `# Context Checkpoint
+
+**Created:** ${new Date().toISOString()}
+**Context Usage:** ${this.state.currentUsage}%
+
+## Current State
+
+### Phase
+${await this.getCurrentPhaseInfo()}
+
+### Open Findings
+${await this.getOpenFindingsSummary()}
+
+### Pending Actions
+${this.state.pendingActions.map(a => `- ${a}`).join('\n')}
+
+## Recovery Instructions
+
+To recover from this checkpoint:
+1. Read task_plan.md for current phase
+2. Read findings.md for open findings
+3. Read progress.md for session history
+4. Read templates/lessons-learned.md for lessons
+
+## Files to Read for Reconstruction
+
+1. \`task_plan.md\` - Current phase and progress
+2. \`findings.md\` - Open findings requiring action
+3. \`progress.md\` - Session log
+4. \`docs/architecture.md\` - Architecture reference
+5. \`templates/lessons-learned.md\` - Lessons learned
+`;
+    await writeFile(this.state.checkpointFile, checkpoint);
+  }
+
+  // Create reconstruction guide for context clearing
+  private async createReconstructionGuide(): Promise<string> {
+    return `# Context Reconstruction Guide
+
+Context was cleared at ${new Date().toISOString()}.
+
+## To Reconstruct Context:
+
+1. **READ task_plan.md** - Get current phase and progress
+2. **READ findings.md** - Get open findings
+3. **READ progress.md** - Get session history
+4. **READ templates/lessons-learned.md** - Get relevant lessons
+
+## After Reconstruction:
+
+Continue from the current phase as defined in task_plan.md.
+`;
+  }
+
+  // Legacy method - DEPRECATED
+  async handleLowContext(): Promise<void> {
+    console.warn('DEPRECATED: handleLowContext() - use checkAndHandleContext() instead');
+    await this.checkAndHandleContext();
+  }
+
+  // Helper methods
+  private async getContextUsage(): Promise<number> {
+    // This would integrate with Claude Code's context monitoring
+    // Return percentage of context window used
+    return 0; // Placeholder
+  }
+
+  private async readFile(path: string): Promise<string> {
+    // Read file content
+    return '';
+  }
+
+  private async updateTaskPlan(timestamp: string): Promise<void> {
+    // Update task_plan.md with current state
+  }
+
+  private async updateFindings(timestamp: string): Promise<void> {
+    // Update findings.md with current state
+  }
+
+  private async updateProgress(timestamp: string): Promise<void> {
+    // Update progress.md with current state
+  }
+
+  private async updateLessonsLearned(): Promise<void> {
+    // Update templates/lessons-learned.md
+  }
+
+  private async getCurrentPhaseInfo(): Promise<string> {
+    return 'Current phase info';
+  }
+
+  private async getOpenFindingsSummary(): Promise<string> {
+    return 'Open findings summary';
+  }
+
+  private async readCheckpointFile(): Promise<string> {
+    return await this.readFile(this.state.checkpointFile);
+  }
+}
+
+interface ContextActionResult {
+  action: 'none' | 'warn' | 'checkpoint' | 'clear' | 'reconstruct';
+  message: string;
+  checkpointFile?: string;
+  reconstructionGuide?: string;
+  reconstructedContext?: {
+    taskPlan: string;
+    findings: string;
+    progress: string;
+    architecture: string;
+    lessonsLearned: string;
+    checkpoint?: string;
+  };
+  nextAction?: string;
+  suggestion?: string;
 }
 ```
 
@@ -601,8 +980,8 @@ class WorkflowOrchestrator {
   private contextManager: ContextManager;
 
   async executeWorkflow(): Promise<void> {
-    // Check context window at start
-    await this.contextManager.handleLowContext();
+    // CRITICAL FIX: Check context window at start
+    await this.contextManager.checkAndHandleContext();
 
     // For each phase in workflow
     for (const phase of WORKFLOW_PHASES) {
@@ -612,6 +991,12 @@ class WorkflowOrchestrator {
 
   private async executePhase(phase: Phase): Promise<void> {
     console.log(`Executing Phase: ${phase.name}`);
+
+    // CRITICAL FIX: Check context BEFORE each phase
+    const contextResult = await this.contextManager.checkAndHandleContext();
+    if (contextResult.action === 'checkpoint' || contextResult.action === 'clear') {
+      console.log(`Context action: ${contextResult.message}`);
+    }
 
     // Create findings if required
     if (phase.createsFindings) {
@@ -628,6 +1013,7 @@ class WorkflowOrchestrator {
     }
 
     // Enforce findings closure before proceeding
+    // CRITICAL FIX: This also verifies lessons captured
     if (phase.createsFindings) {
       this.findingsManager.enforceFindingsClosure(phase.id);
     }
@@ -643,6 +1029,9 @@ class WorkflowOrchestrator {
         return;
       }
     }
+
+    // CRITICAL FIX: Check context AFTER each phase
+    await this.contextManager.checkAndHandleContext();
 
     // Move to next phase
     this.phaseManager.transitionTo(phase.id);
@@ -707,17 +1096,29 @@ The Workflow Enforcer integrates with Claude Code via:
    - PhaseManager enforces strict order
    - Throws error if attempting to skip
 
-2. **Findings Must Close**
+2. **Findings Must Close With Lessons**
    - FindingsManager blocks transition until findings closed
+   - CRITICAL FIX: All closed findings MUST have lessons captured
    - Enforced before each phase transition
+   - `closeFinding(findingId, lesson)` is MANDATORY
 
 3. **Quality Gates Must Pass**
    - QualityGateValidator loops back to failed phase
    - No exceptions
+   - CRITICAL FIX: Post-review linting gate added
 
-4. **Context Management**
-   - ContextManager proactively manages window
-   - Auto-saves and reconstructs when < 5%
+4. **Context Management - Proactive**
+   - CRITICAL FIX: ContextManager now works BEFORE Claude auto-compact
+   - 80%: Warning issued
+   - 70%: MANDATORY checkpoint - state saved to docs
+   - 60%: Context cleared
+   - 50%: Context reconstructed from docs
+   - Checked BEFORE and AFTER each phase
+
+5. **Lessons Learned Enforcement**
+   - CRITICAL FIX: Cannot close finding without lesson
+   - Lessons are persisted to templates/lessons-learned.md
+   - Lessons are checked before agent starts work
 
 ### Error Handling Strategy
 

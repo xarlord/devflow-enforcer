@@ -1,7 +1,7 @@
 {
   "name": "@xarlord/devflow-enforcer",
-  "version": "2.0.2",
-  "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 14-phase quality gates",
+  "version": "2.1.0",
+  "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 15-phase quality gates, UI/UX, Android, and enhanced testing support",
   "keywords": [
     "claude-code",
     "claude",
@@ -13,7 +13,13 @@
     "testing",
     "code-review",
     "context-optimization",
-    "software-development-lifecycle"
+    "software-development-lifecycle",
+    "ui-ux",
+    "android",
+    "mobile",
+    "accessibility",
+    "e2e-testing",
+    "specification"
   ],
   "license": "MIT",
   "author": {
@@ -31,9 +37,10 @@
     "minVersion": "1.0",
     "requires": [],
     "provides": {
-      "workflow": "Enforces 14-phase software development process",
-      "agents": "15 specialized agents for different development tasks",
-      "documentation": "Auto-generated documentation and summaries"
+      "workflow": "Enforces 15-phase software development process with lessons learned enforcement",
+      "agents": "23 specialized agents for different development tasks including UI/UX, Android, and specification",
+      "documentation": "Auto-generated documentation and summaries",
+      "contextManagement": "Proactive context management with checkpointing at 70% threshold"
     },
     "marketplace": {
       "source": "https://github.com/xarlord/devflow-enforcer.git",
@@ -49,10 +56,12 @@
   },
   "settings": {
     "activation": "automatic",
-    "contextThreshold": 80,
+    "contextThreshold": 70,
     "qualityRequirements": {
       "coverageThreshold": 95,
-      "passRateThreshold": 100
+      "passRateThreshold": 100,
+      "accessibilityThreshold": 100,
+      "lintThreshold": 0
     }
   },
   "installation": {

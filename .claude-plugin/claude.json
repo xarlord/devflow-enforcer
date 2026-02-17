@@ -1,27 +1,54 @@
 {
   "apiVersion": "2024-11-05",
   "name": "DevFlow Enforcer",
-  "description": "Context-optimized workflow enforcement plugin - ~78% token savings with 14-phase quality gates",
-  "version": "2.0.0",
+  "description": "Context-optimized workflow enforcement plugin - ~78% token savings with 14-phase quality gates, UI/UX, Android, and enhanced testing support",
+  "version": "2.1.0",
   "publisher": "Sefa Ocakli",
   "license": "MIT",
   "type": "workflow-enforcement",
-  "categories": ["workflow", "devops", "quality"],
+  "categories": ["workflow", "devops", "quality", "ui-ux", "mobile", "testing"],
   "capabilities": {
     "workflowEnforcement": {
-      "phases": 14,
+      "phases": 15,
       "qualityGates": true,
-      "metrics": ["95% coverage", "100% pass rate"]
+      "metrics": ["95% coverage", "100% pass rate", "100% WCAG 2.1 AA"],
+      "enhancements": {
+        "lessonsEnforcement": true,
+        "postReviewLinting": true,
+        "proactiveContextManagement": true
+      }
     },
     "contextOptimization": {
       "savingsPercentage": 78,
-      "strategies": ["selective-agent-loading", "structured-output", "documentation-summarization", "context-pruning", "jit-workflow-loading"]
+      "strategies": ["selective-agent-loading", "structured-output", "documentation-summarization", "context-pruning", "jit-workflow-loading", "proactive-checkpoint"],
+      "thresholds": {
+        "warningLevel": 70,
+        "checkpointLevel": 70,
+        "clearLevel": 60,
+        "reconstructLevel": 50
+      }
     },
     "agentSystem": {
-      "totalAgents": 15,
+      "totalAgents": 25,
       "specializedAgents": ["project-lead", "architect", "qa", "testing", "security", "git-expert", "retrospective"],
       "codingAgents": ["typescript", "python", "java", "cpp", "rust", "csharp"],
-      "infrastructureAgents": ["docker", "database"]
+      "infrastructureAgents": ["docker", "database"],
+      "uiUxAgents": ["ui-ux-designer", "accessibility-expert", "frontend-developer"],
+      "mobileAgents": ["android-developer", "android-architect"],
+      "testingAgents": ["ui-testing-agent", "visual-regression-agent"],
+      "specificationAgents": ["spec-linking-agent"]
+    },
+    "testingSupport": {
+      "unit": ["jest", "vitest", "pytest", "junit", "xctest"],
+      "e2e": ["cypress", "playwright", "appium"],
+      "visual": ["percy", "chromatic"],
+      "mutation": ["stryker"],
+      "mobile": ["espresso", "instrumentation"]
+    },
+    "accessibilitySupport": {
+      "standards": ["WCAG 2.1 AA"],
+      "tools": ["axe-core", "lighthouse", "wave"],
+      "enforcement": "mandatory"
     }
   },
   "manifests": {
@@ -33,19 +60,23 @@
   },
   "settings": {
     "activation": "automatic",
-    "contextThreshold": 80,
+    "contextThreshold": 70,
     "qualityRequirements": {
       "coverageThreshold": 95,
-      "passRateThreshold": 100
+      "passRateThreshold": 100,
+      "accessibilityThreshold": 100,
+      "lintThreshold": 0
     }
   },
   "claude": {
     "minVersion": "1.0",
     "requires": [],
     "provides": {
-      "workflow": "Enforces 14-phase software development process",
-      "agents": "15 specialized agents for different development tasks",
-      "documentation": "Auto-generated documentation and summaries"
+      "workflow": "Enforces 15-phase software development process with lessons learned enforcement",
+      "agents": "25 specialized agents for different development tasks including UI/UX, Android, testing, and specification",
+      "documentation": "Auto-generated documentation and summaries",
+      "contextManagement": "Proactive context management with checkpointing at 70% threshold",
+      "specTraceability": "Requirement-to-test traceability and coverage mapping"
     }
   },
   "installation": {
@@ -79,7 +110,13 @@
     "testing",
     "code-review",
     "context-optimization",
-    "software-development-lifecycle"
+    "software-development-lifecycle",
+    "ui-ux",
+    "android",
+    "mobile",
+    "accessibility",
+    "e2e-testing",
+    "specification"
   ],
   "author": {
       "name": "Sefa Ocakli",
