@@ -1,58 +1,40 @@
 {
   "name": "devflow-enforcer",
-  "owner": {
+  "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 15-phase quality gates, UI/UX, Android, Testing & Spec Linking",
+  "version": "2.1.0",
+  "author": {
     "name": "Sefa Ocakli",
-    "email": "sefa.ocakli@daiichi.local"
+    "email": "sefa.ocakli@daiichi.local",
+    "url": "https://github.com/xarlord"
   },
+  "homepage": "https://github.com/xarlord/devflow-enforcer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xarlord/devflow-enforcer.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "claude",
+    "plugin",
+    "workflow",
+    "devops",
+    "sdlc",
+    "quality-gates",
+    "testing",
+    "code-review",
+    "context-optimization",
+    "ui-ux",
+    "android",
+    "accessibility",
+    "e2e-testing",
+    "specification"
+  ],
   "plugins": [
     {
       "name": "devflow-enforcer",
-      "source": "./",
-      "description": "Context-optimized workflow enforcement plugin for Claude Code - ~78% token savings with 15-phase quality gates, UI/UX, Android, Testing & Spec Linking",
-      "version": "2.1.0",
-      "homepage": "https://github.com/xarlord/devflow-enforcer",
-      "repository": "https://github.com/xarlord/devflow-enforcer",
-      "license": "MIT",
-      "author": {
-        "name": "Sefa Ocakli",
-        "email": "sefa.ocakli@daiichi.local"
-      },
-      "keywords": [
-        "claude-code",
-        "claude",
-        "plugin",
-        "workflow",
-        "devops",
-        "sdlc",
-        "quality-gates",
-        "testing",
-        "code-review",
-        "context-optimization",
-        "software-development-lifecycle",
-        "ui-ux",
-        "android",
-        "mobile",
-        "accessibility",
-        "e2e-testing",
-        "specification",
-        "traceability"
-      ],
-      "capabilities": {
-        "agents": 25,
-        "skills": 19,
-        "commands": 15,
-        "workflowPhases": 15
-      },
-      "features": [
-        "Lessons enforcement when closing findings",
-        "Post-review linting phase",
-        "Proactive context management",
-        "WCAG 2.1 AA accessibility support",
-        "Android development support",
-        "E2E and visual testing",
-        "Mutation testing with Stryker",
-        "Requirement-to-test traceability"
-      ]
+      "path": ".",
+      "manifest": ".claude-plugin/plugin.json"
     }
   ]
 }
