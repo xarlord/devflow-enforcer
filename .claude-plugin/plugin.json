@@ -38,19 +38,22 @@
         "process",
         "ui-ux",
         "mobile",
+        "testing",
         "specification"
       ],
-      "total": 23,
+      "total": 25,
       "new": {
         "ui-ux": ["ui-ux-designer", "accessibility-expert", "frontend-developer"],
         "mobile": ["android-developer", "android-architect"],
+        "testing": ["ui-testing-agent", "visual-regression-agent"],
         "specification": ["spec-linking-agent"]
       }
     },
     "skills": {
-      "total": 16,
+      "total": 19,
       "new": [
         "capture-lesson",
+        "context-checkpoint",
         "ui-review",
         "accessibility-audit",
         "design-system",
@@ -61,12 +64,15 @@
         "visual-testing",
         "mobile-ui-testing",
         "mutation-testing",
+        "coverage-analysis",
+        "test-generation",
         "spec-traceability",
+        "spec-validation",
         "coverage-mapping"
       ]
     },
     "commands": {
-      "total": 13,
+      "total": 15,
       "new": [
         "context-checkpoint",
         "ui-review",
@@ -76,14 +82,17 @@
         "e2e-test",
         "visual-test",
         "test-coverage",
-        "spec-link"
+        "mutation-test",
+        "spec-link",
+        "traceability"
       ]
     },
     "workflowEnhancements": {
       "lessonsEnforcement": true,
       "postReviewLinting": true,
       "proactiveContextManagement": true,
-      "specTraceability": true
+      "specTraceability": true,
+      "coverageMapping": true
     }
   }
 }

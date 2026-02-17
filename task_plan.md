@@ -303,10 +303,10 @@ Context < 50% → Reconstruct from documentation
 - [x] Create spec commands (commands/spec-link.md, commands/traceability.md)
 
 ### Phase 7: Integration & Testing
-- [ ] Update main workflow
-- [ ] Integration testing
-- [ ] Documentation update
-- [ ] Version bump to 2.1.0
+- [x] Update main workflow
+- [x] Integration testing (verified all files in place)
+- [x] Documentation update (README.md updated)
+- [x] Version bump to 2.1.0
 
 ### Phase 8: PR Creation
 - [ ] Final review

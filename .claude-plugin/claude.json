@@ -29,12 +29,13 @@
       }
     },
     "agentSystem": {
-      "totalAgents": 23,
+      "totalAgents": 25,
       "specializedAgents": ["project-lead", "architect", "qa", "testing", "security", "git-expert", "retrospective"],
       "codingAgents": ["typescript", "python", "java", "cpp", "rust", "csharp"],
       "infrastructureAgents": ["docker", "database"],
       "uiUxAgents": ["ui-ux-designer", "accessibility-expert", "frontend-developer"],
       "mobileAgents": ["android-developer", "android-architect"],
+      "testingAgents": ["ui-testing-agent", "visual-regression-agent"],
       "specificationAgents": ["spec-linking-agent"]
     },
     "testingSupport": {
@@ -72,9 +73,10 @@
     "requires": [],
     "provides": {
       "workflow": "Enforces 15-phase software development process with lessons learned enforcement",
-      "agents": "23 specialized agents for different development tasks including UI/UX, Android, and specification",
+      "agents": "25 specialized agents for different development tasks including UI/UX, Android, testing, and specification",
       "documentation": "Auto-generated documentation and summaries",
-      "contextManagement": "Proactive context management with checkpointing at 70% threshold"
+      "contextManagement": "Proactive context management with checkpointing at 70% threshold",
+      "specTraceability": "Requirement-to-test traceability and coverage mapping"
     }
   },
   "installation": {
