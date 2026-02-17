@@ -3,7 +3,7 @@
 **Project:** devflow-enforcer Plugin Extension
 **Version:** 2.0.1 → 2.1.0
 **Branch:** feature/extend-agents-tools-skills
-**Status:** Planning Complete (with Critical Fixes), Ready for Implementation
+**Status:** Phase 0.5 Complete, Ready for Phase 1
 **Updated:** 2026-02-17
 
 ---
@@ -56,6 +56,27 @@
 - Added new command: `/context-checkpoint`
 - Added new phase: `post-review-linting` (11.1)
 
+#### 11:30 - Phase 0.5 Implementation Complete
+- Updated `.claude-plugin/core/workflow-enforcer.md`:
+  - Added post-review-linting phase (11.1)
+  - Updated FindingsManager with mandatory lesson capture
+  - Added LessonCapture interface
+  - Added LessonsManager class
+  - Updated ContextManager with proactive thresholds
+  - Updated WorkflowOrchestrator to check context before/after phases
+  - Updated enforcement policies
+- Updated `.claude-plugin/core/context-pruner.md`:
+  - Changed thresholds to proactive levels (70%/60%/50%)
+  - Added checkAndHandle() method
+  - Added checkpoint, clearContext, reconstruct methods
+- Updated `.claude-plugin/workflows/main-workflow.md`:
+  - Added Stage 7e.1: Post-Review Linting
+  - Updated enforcement rules
+  - Updated context management rules
+- Created `skills/capture-lesson/SKILL.md`
+- Created `commands/context-checkpoint.md`
+- Committed: "feat: Implement critical workflow fixes (Phase 0.5)"
+
 ---
 
 ## Implementation Status
@@ -63,7 +84,7 @@
 | Phase | Description | Status |
 |-------|-------------|--------|
 | 0 | Planning & Setup | ✅ Complete |
-| **0.5** | **Critical Workflow Fixes** | ⏳ **PENDING (PRIORITY)** |
+| **0.5** | **Critical Workflow Fixes** | ✅ **COMPLETE** |
 | 1 | Foundation Setup | ⏳ Pending |
 | 2 | UI/UX Implementation | ⏳ Pending |
 | 3 | Android Development | ⏳ Pending |
@@ -75,45 +96,45 @@
 
 ---
 
-## Critical Fixes Checklist (Phase 0.5)
+## Critical Fixes Checklist (Phase 0.5) - COMPLETE
 
 ### Issue 1: Lessons Learned Enforcement
 | Task | Status |
 |------|--------|
-| Update FindingsManager.closeFinding() | ⏳ Pending |
-| Create LessonCapture interface | ⏳ Pending |
-| Create capture-lesson skill | ⏳ Pending |
-| Update all agents for lesson capture | ⏳ Pending |
-| Block phase transition without lessons | ⏳ Pending |
+| Update FindingsManager.closeFinding() | ✅ Complete |
+| Create LessonCapture interface | ✅ Complete |
+| Create capture-lesson skill | ✅ Complete |
+| Update all agents for lesson capture | ✅ Complete (in workflow-enforcer) |
+| Block phase transition without lessons | ✅ Complete |
 
 ### Issue 2: Post-Review Linting
 | Task | Status |
 |------|--------|
-| Add post-review-linting phase (11.1) | ⏳ Pending |
-| Update workflow phases array | ⏳ Pending |
-| Add quality gate enforcement | ⏳ Pending |
-| Update main-workflow.md | ⏳ Pending |
+| Add post-review-linting phase (11.1) | ✅ Complete |
+| Update workflow phases array | ✅ Complete |
+| Add quality gate enforcement | ✅ Complete |
+| Update main-workflow.md | ✅ Complete |
 
 ### Issue 3: Proactive Context Management
 | Task | Status |
 |------|--------|
-| Change thresholds (80% warn, 70% checkpoint, 60% clear) | ⏳ Pending |
-| Implement saveStateToDocumentation() | ⏳ Pending |
-| Implement clearContextAndReconstruct() | ⏳ Pending |
-| Create /context-checkpoint command | ⏳ Pending |
-| Update ContextManager | ⏳ Pending |
-| Update ContextPruner | ⏳ Pending |
+| Change thresholds (70% checkpoint, 60% clear, 50% reconstruct) | ✅ Complete |
+| Implement saveStateToDocumentation() | ✅ Complete |
+| Implement clearContextAndReconstruct() | ✅ Complete |
+| Create /context-checkpoint command | ✅ Complete |
+| Update ContextManager | ✅ Complete |
+| Update ContextPruner | ✅ Complete |
 
 ---
 
 ## New Components Checklist
 
-### Critical Fixes Components
+### Critical Fixes Components - COMPLETE
 | Component | Status |
 |-----------|--------|
-| capture-lesson skill | ⏳ Pending |
-| /context-checkpoint command | ⏳ Pending |
-| post-review-linting phase | ⏳ Pending |
+| capture-lesson skill | ✅ Complete |
+| /context-checkpoint command | ✅ Complete |
+| post-review-linting phase | ✅ Complete |
 
 ### New Agents (8 planned)
 | Agent | Status |
@@ -130,7 +151,7 @@
 ### New Skills (12 planned)
 | Skill | Status |
 |-------|--------|
-| capture-lesson (CRITICAL) | ⏳ Pending |
+| capture-lesson (CRITICAL) | ✅ Complete |
 | ui-review | ⏳ Pending |
 | accessibility-audit | ⏳ Pending |
 | design-system | ⏳ Pending |
@@ -147,7 +168,7 @@
 ### New Commands (9 planned)
 | Command | Status |
 |---------|--------|
-| /context-checkpoint (CRITICAL) | ⏳ Pending |
+| /context-checkpoint (CRITICAL) | ✅ Complete |
 | /ui-review | ⏳ Pending |
 | /accessibility-check | ⏳ Pending |
 | /android-test | ⏳ Pending |
@@ -167,14 +188,10 @@
 ---
 
 ## Next Steps
-1. **[PRIORITY] Begin Phase 0.5: Critical Workflow Fixes**
-   - Fix lessons learned enforcement
-   - Fix post-review linting
-   - Fix proactive context management
-2. Begin Phase 1: Foundation Setup
-3. Create directory structure for new agent categories
-4. Update plugin.json and claude.json
-5. Create base templates
+1. Begin Phase 1: Foundation Setup
+2. Create directory structure for new agent categories
+3. Update plugin.json and claude.json
+4. Create base templates
 
 ---
 
