@@ -289,11 +289,11 @@ Context < 50% → Reconstruct from documentation
 - [ ] Integrate with existing testing workflow
 
 ### Phase 5: Enhanced Unit Testing
-- [ ] Enhance existing testing agent
-- [ ] Add mutation testing skill
-- [ ] Add test generation skill
-- [ ] Add coverage analysis skill
-- [ ] Create new testing commands
+- [x] Enhance existing testing agent
+- [x] Add mutation testing skill (skills/mutation-testing/SKILL.md)
+- [x] Add test generation skill (skills/test-generation/SKILL.md)
+- [x] Add coverage analysis skill (skills/coverage-analysis/SKILL.md)
+- [x] Create new testing commands (commands/test-coverage.md, commands/mutation-test.md)
 
 ### Phase 6: Spec Linking Implementation
 - [ ] Create spec linking agent
